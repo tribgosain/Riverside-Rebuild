@@ -25,6 +25,17 @@
   --red: #e2231a;
   --warn: #C23B2E;
 
+  /* One vertical-rhythm scale, used throughout instead of ad-hoc margins:
+     space-1 ties a label directly to what it labels (kicker/headline,
+     "the brief"/quote, field-label/input); space-2 is a sub-component gap;
+     space-3 is the default gap between distinct stacked blocks on a
+     screen; space-4/5 are larger desktop-only breathing room. */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   /* Deliberately flat, not rounded — a consistent system choice, not a
      default. Applied everywhere: cards, buttons, inputs, chips, tags. */
@@ -387,6 +398,16 @@ a:focus-visible {
    headline is one colour, one line, and the girder motif (not colour) does
    the emphasis work. */
 
+.setup-screen {
+  /* Landing/Decisions get a wider column than the default .screen — at
+     genuinely wide desktop widths (1440px+) the shared 640-760px column
+     left a large one-sided void of empty cream to its right, since a
+     centred-but-narrow column still reads as left-aligned when nothing
+     marks where it ends. Wider fixed max-width closes that gap while
+     staying centred (see the 1024px+ override below). */
+  gap: var(--space-3);
+}
+
 .setup-hero-photo {
   /* Full-bleed: break out of .screen's max-width/padding/centering to
      span the true viewport width, regardless of content column width. */
@@ -395,7 +416,6 @@ a:focus-visible {
   left: 50%;
   margin-left: -50vw;
   margin-top: -20px;
-  margin-bottom: 10px;
 }
 
 .setup-hero-photo__frame {
@@ -459,12 +479,21 @@ a:focus-visible {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(242, 236, 225, 0.95);
-  padding: 16px 10px 7px 50px;
+  /* Generous padding on the top/left, well beyond the text itself, gives
+     the scrim room to fully resolve to fully-transparent before it hits
+     the box's own edge — an explicit ellipse size (rather than the
+     "farthest-corner" keyword) is what actually guarantees that: keyword
+     sizing fits the ellipse to the box's own aspect ratio, which for a
+     short, wide box like this one leaves real opacity still present right
+     at the top edge — the hard line this was meant to fix. Explicit radii
+     smaller than the padded box on both axes mean the gradient finishes
+     at 0 while still inside the box, so the box's own edge is invisible. */
+  padding: 28px 10px 7px 90px;
   background: radial-gradient(
-    ellipse at bottom right,
+    ellipse 260px 38px at bottom right,
     rgba(26, 23, 20, 0.7) 0%,
-    rgba(26, 23, 20, 0.38) 50%,
-    rgba(26, 23, 20, 0) 88%
+    rgba(26, 23, 20, 0.35) 55%,
+    rgba(26, 23, 20, 0) 100%
   );
   pointer-events: none;
 }
@@ -479,10 +508,6 @@ a:focus-visible {
   }
 }
 
-.masthead-hero {
-  margin: 4px 0 2px;
-}
-
 .masthead-hero__kicker {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -490,12 +515,17 @@ a:focus-visible {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-1);
 }
 
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(34px, 10vw, 56px);
+  /* 10vw didn't account for the screen's fixed horizontal padding, so it
+     overflowed its own line at common phone widths (clipped off-screen,
+     not just tight) — 8.5vw keeps "RIVERSIDE REBUILD." on one line down
+     to ~320px wide with a small safety margin, verified directly rather
+     than assumed. */
+  font-size: clamp(26px, 8.5vw, 56px);
   font-weight: 900;
   letter-spacing: -0.01em;
   line-height: 1;
@@ -505,22 +535,29 @@ a:focus-visible {
   white-space: nowrap;
 }
 
+/* A confident underline anchored directly to the headline it belongs to
+   (tight, fixed gap — not floating ambiguously between it and the brief
+   below). Solid bar, not a thin hatch — a dense diagonal stripe read as
+   a stray dashed rule at small sizes; a solid mark with the diagonal
+   stripes as texture inside it reads as deliberate at any size. */
 .masthead-hero__girder {
-  width: 84px;
+  width: 56px;
   height: 10px;
-  margin-top: 10px;
-  background: repeating-linear-gradient(
-    65deg,
-    var(--kit-primary) 0,
-    var(--kit-primary) 2px,
-    transparent 2px,
-    transparent 7px
-  );
+  margin-top: var(--space-1);
+  background:
+    repeating-linear-gradient(
+      65deg,
+      rgba(242, 236, 225, 0.35) 0,
+      rgba(242, 236, 225, 0.35) 3px,
+      transparent 3px,
+      transparent 8px
+    ),
+    var(--kit-primary);
 }
 
 .pull-quote {
   border-left: 3px solid var(--kit-primary);
-  padding-left: 16px;
+  padding-left: var(--space-2);
   max-width: 52ch;
 }
 
@@ -531,7 +568,7 @@ a:focus-visible {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-faint);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-1);
 }
 
 .pull-quote__text {
@@ -1938,6 +1975,26 @@ a:focus-visible {
 
   .screen {
     padding-top: 32px;
+  }
+
+  /* The shared 760px column is right for list-heavy screens (Sell/Sign/
+     XI), but on Landing/Decisions it left most of a wide viewport as an
+     unbroken void to one side. Widen just this pairing, within the brief's
+     900-1000px suggestion, and keep it centred via the shared margin:auto. */
+  .setup-screen {
+    max-width: 960px;
+    gap: var(--space-4);
+  }
+
+  .setup-hero-photo {
+    /* .screen's padding-top grows to 32px at this breakpoint — match it so
+       the full-bleed photo still cancels the padding exactly, rather than
+       leaving a thin uncancelled strip above it. */
+    margin-top: -32px;
+  }
+
+  .pull-quote {
+    max-width: 62ch;
   }
 
   .hero-headline {
