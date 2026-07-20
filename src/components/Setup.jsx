@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SPONSORS, KIT_COLOURWAYS } from '../data/copy.js';
 import Landing from './Landing.jsx';
 import Decisions from './Decisions.jsx';
@@ -24,6 +24,13 @@ export default function Setup({ dispatch, challenge }) {
   const [customPattern, setCustomPattern] = useState('solid');
   const [customNeck, setCustomNeck] = useState('v');
   const [philosophyId, setPhilosophyId] = useState(null);
+
+  // Landing <-> Decisions is a local stage switch, not a state.screen
+  // change, so App.jsx's global scroll reset never fires for it — needs
+  // its own reset here.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [stage]);
 
   const sponsor = sponsorId ? SPONSORS.find((s) => s.id === sponsorId) : null;
   const sponsorAllowed = !sponsor || !sponsor.restrictedTo || sponsor.restrictedTo.includes(mandateKey);

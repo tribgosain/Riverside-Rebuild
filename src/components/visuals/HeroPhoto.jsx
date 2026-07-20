@@ -38,11 +38,10 @@ export default function HeroPhoto() {
         />
         <div className="setup-hero-photo__halftone" aria-hidden="true" />
         <div className="setup-hero-photo__fade" aria-hidden="true" />
+        <figcaption className="setup-hero-photo__caption">
+          Arne Müseler, CC BY-SA 3.0 DE, via Wikimedia Commons
+        </figcaption>
       </div>
-
-      <figcaption className="setup-hero-photo__caption">
-        Riverside Stadium — Arne Müseler, CC BY-SA 3.0 DE, via Wikimedia Commons
-      </figcaption>
     </figure>
   );
 }

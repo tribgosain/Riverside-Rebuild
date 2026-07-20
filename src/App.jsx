@@ -26,6 +26,14 @@ export default function App() {
     saveGame(state);
   }, [state]);
 
+  // Every top-level screen transition passes through state.screen (see
+  // gameReducer.js) — reset scroll here rather than at each dispatch site.
+  // Setup's internal Landing/Decisions stage doesn't touch state.screen, so
+  // it has its own matching reset in Setup.jsx.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [state.screen]);
+
   useEffect(() => {
     // Apply the chosen kit colourway as CSS variables for the whole session.
     if (state.kit) {
