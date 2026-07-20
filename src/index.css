@@ -531,22 +531,18 @@ a:focus-visible {
 
 /* A confident underline anchored directly to the headline it belongs to
    (tight, fixed gap — not floating ambiguously between it and the brief
-   below). Solid bar, not a thin hatch — a dense diagonal stripe read as
-   a stray dashed rule at small sizes; a solid mark with the diagonal
-   stripes as texture inside it reads as deliberate at any size. */
+   below). Two earlier attempts at a textured/hatched version of this both
+   read as broken (a "stray dashed line" pre-round26, then a "hazard-stripe
+   block" once thickened) — a plain solid bar, skewed to sit at an angle
+   rather than textured with an internal repeating pattern, is what
+   actually reads as a clean, deliberate accent line rather than a bug. */
 .masthead-hero__girder {
   width: 56px;
-  height: 10px;
+  height: 5px;
   margin-top: var(--space-1);
-  background:
-    repeating-linear-gradient(
-      65deg,
-      rgba(242, 236, 225, 0.35) 0,
-      rgba(242, 236, 225, 0.35) 3px,
-      transparent 3px,
-      transparent 8px
-    ),
-    var(--kit-primary);
+  background: var(--kit-primary);
+  transform: skewX(-18deg);
+  transform-origin: left;
 }
 
 .pull-quote {
