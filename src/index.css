@@ -29,12 +29,14 @@
      space-1 ties a label directly to what it labels (kicker/headline,
      "the brief"/quote, field-label/input); space-2 is a sub-component gap;
      space-3 is the default gap between distinct stacked blocks on a
-     screen; space-4/5 are larger desktop-only breathing room. */
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 48px;
+     screen; space-4/5 are larger desktop-only breathing room. Scaled up
+     ~1.5x in round27 — premium-editorial reads as more restrained via
+     more whitespace, not more decoration. */
+  --space-1: 12px;
+  --space-2: 24px;
+  --space-3: 36px;
+  --space-4: 48px;
+  --space-5: 72px;
 
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   /* Deliberately flat, not rounded — a consistent system choice, not a
@@ -434,16 +436,6 @@ a:focus-visible {
   filter: url(#duotone-ink-cream) contrast(1.08);
 }
 
-.setup-hero-photo__halftone {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(26, 23, 20, 0.55) 0.55px, transparent 0.55px);
-  background-size: 4px 4px;
-  opacity: 0.3;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
 /* Multi-stop rather than a single linear fade: stays close to the photo
    through the midtone then closes out fast in the last stretch, so the
    transition reads as a deliberate cut into the page background instead
@@ -527,7 +519,9 @@ a:focus-visible {
      than assumed. */
   font-size: clamp(26px, 8.5vw, 56px);
   font-weight: 900;
-  letter-spacing: -0.01em;
+  /* Bigger display type reads tighter, not looser — -0.01em was closer to
+     body-text tracking than display tracking at this size. */
+  letter-spacing: -0.025em;
   line-height: 1;
   text-transform: uppercase;
   color: var(--text);
@@ -556,7 +550,10 @@ a:focus-visible {
 }
 
 .pull-quote {
-  border-left: 3px solid var(--kit-primary);
+  /* Ink, not red — the girder underline is the one red accent rule on
+     this screen; a second red rule here was decorative repetition rather
+     than a second deliberate signal. */
+  border-left: 3px solid var(--border);
   padding-left: var(--space-2);
   max-width: 52ch;
 }

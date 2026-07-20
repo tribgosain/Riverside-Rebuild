@@ -67,8 +67,6 @@ export default function Decisions({
         </div>
       </section>
 
-      <div className="girder-divider" />
-
       <section className="setup-section">
         <h2 className="section-title">Kit sponsor</h2>
         {SPONSOR_TIERS.map((tier) => (
@@ -96,8 +94,6 @@ export default function Decisions({
           </div>
         ))}
       </section>
-
-      <div className="girder-divider" />
 
       <section className="setup-section">
         <h2 className="section-title">Home kit</h2>
@@ -164,8 +160,6 @@ export default function Decisions({
           </div>
         )}
       </section>
-
-      <div className="girder-divider" />
 
       <section className="setup-section">
         <h2 className="section-title">Away kit</h2>

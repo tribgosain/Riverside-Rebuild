@@ -2,11 +2,13 @@ import heroImg from '../../assets/riverside-hero.webp';
 
 // Real photo, not generated: aerial view of the Riverside Stadium (with the
 // Transporter Bridge visible upriver), Arne Müseler, CC BY-SA 3.0 DE, via
-// Wikimedia Commons. Treated as a halftone newspaper photograph — duotone
-// (shadows to ink, highlights to cream) via an SVG filter, plus a dot
-// overlay and a fade into the page background — rather than a full-colour
-// hero, to stay in the cream/newsprint identity instead of a glossy
-// saturated photo hero.
+// Wikimedia Commons. Treated as a duotone photograph (shadows to ink,
+// highlights to cream) via an SVG filter, plus a fade into the page
+// background — rather than a full-colour hero, to stay in the cream/
+// newsprint identity instead of a glossy saturated photo hero. A visible
+// halftone dot overlay was tried and dropped in round27 — it read as a
+// heavy-handed filter rather than a considered photo treatment; duotone
+// alone reads more premium.
 export default function HeroPhoto() {
   return (
     <figure className="setup-hero-photo">
@@ -36,7 +38,6 @@ export default function HeroPhoto() {
           src={heroImg}
           alt="Aerial view of the Riverside Stadium, Middlesbrough, with the Transporter Bridge visible upriver"
         />
-        <div className="setup-hero-photo__halftone" aria-hidden="true" />
         <div className="setup-hero-photo__fade" aria-hidden="true" />
         <figcaption className="setup-hero-photo__caption">
           Arne Müseler, CC BY-SA 3.0 DE, via Wikimedia Commons
