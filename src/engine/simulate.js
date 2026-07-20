@@ -6,6 +6,13 @@
 
 const BASE_GOALS = 1.35;
 const GOAL_CAP = 8;
+// Goals-per-strength-point slope. Round29 balance investigation found this
+// too flat relative to per-match variance to reward a well-built squad
+// over a full season — /12 only separated a genuinely strong team from a
+// mid-table one by a modest win-rate margin. /9 makes real strength gaps
+// count for more without eliminating variance (still well short of
+// deterministic).
+const STRENGTH_SLOPE = 9;
 
 // Knuth's algorithm — fine at these small lambdas, no need for anything fancier.
 function poissonSample(lambda) {
@@ -33,8 +40,8 @@ export function simulateMatch(strengths, opts = {}) {
   const awayEff = strengths.away + noise(awayVariance);
   const diff = homeEff - awayEff;
 
-  const homeLambda = Math.max(0.15, BASE_GOALS + diff / 12);
-  const awayLambda = Math.max(0.15, BASE_GOALS - diff / 12);
+  const homeLambda = Math.max(0.15, BASE_GOALS + diff / STRENGTH_SLOPE);
+  const awayLambda = Math.max(0.15, BASE_GOALS - diff / STRENGTH_SLOPE);
 
   const homeGoals = Math.min(GOAL_CAP, poissonSample(homeLambda));
   const awayGoals = Math.min(GOAL_CAP, poissonSample(awayLambda));

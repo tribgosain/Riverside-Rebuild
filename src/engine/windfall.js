@@ -19,9 +19,13 @@ export const WINDFALL_EVENTS = [
     minFee: 90,
     maxFee: 130,
     cutPercent: 20,
+    // A fee this size is paid in installments over several seasons in
+    // reality, not as one lump sum on completion — award only the first
+    // tranche, not the full sell-on cut.
+    installmentFraction: 0.4,
     clubs: ['Chelsea'],
-    buildMessage: (fee, cut, club) =>
-      `BREAKING — ${club} agree £${fee}m for Morgan Rogers. Boro's 20% sell-on cut: £${cut}m, straight into the budget.`,
+    buildMessage: (fee, fullCut, awarded, club) =>
+      `BREAKING — ${club} agree £${fee}m for Morgan Rogers. Boro's 20% sell-on cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
   },
   {
     id: 'academy_clause',
@@ -30,8 +34,8 @@ export const WINDFALL_EVENTS = [
     maxFee: 35,
     cutPercent: 15,
     clubs: ['a Premier League club', 'a side in Serie A'],
-    buildMessage: (fee, cut, club) =>
-      `Small windfall — an old academy sell-on clause just paid out. £${fee}m fee to ${club}, Boro's cut: £${cut}m.`,
+    buildMessage: (fee, fullCut, awarded, club) =>
+      `Small windfall — an old academy sell-on clause just paid out. £${fee}m fee to ${club}, Boro's cut: £${awarded}m.`,
   },
 ];
 
@@ -57,8 +61,11 @@ export function rollWindfall(state) {
 
   const event = pickWeighted(WINDFALL_EVENTS);
   const fee = randomInt(event.minFee, event.maxFee);
-  const cut = Math.round(fee * (event.cutPercent / 100) * 10) / 10;
+  const fullCut = Math.round(fee * (event.cutPercent / 100) * 10) / 10;
+  const awarded = event.installmentFraction
+    ? Math.round(fullCut * event.installmentFraction * 10) / 10
+    : fullCut;
   const club = event.clubs[Math.floor(Math.random() * event.clubs.length)];
 
-  return { message: event.buildMessage(fee, cut, club), amount: cut };
+  return { message: event.buildMessage(fee, fullCut, awarded, club), amount: awarded };
 }

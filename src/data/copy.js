@@ -282,32 +282,37 @@ export const PHILOSOPHIES = [
 ];
 
 // Grade bands: finishing position (1-24) -> letter, keyed per mandate.
-// Calibrated against a real 25-run balance test (round23), not a narrative
-// guess — a genuinely optimal Backed-mandate squad averaged 7.28th place
-// across 25 runs (range 4th-12th) and only reached the playoffs 28% of the
-// time, while a deliberately gutted squad averaged 19.84th (range
-// 16th-24th) with zero overlap between the two distributions. Bands below
-// reflect what good play actually produces, not what it "should" produce.
+// Calibrated against a real 25-run balance test, not a narrative guess.
+// Round23's original calibration (optimal squad averaging 7.28th, range
+// 4th-12th, 28% playoff rate; gutted squad averaging 19.84th, range
+// 16th-24th) went stale after round29's balance fix (opponent CLUBS
+// strengths shifted down, strength-to-goals slope steepened) compressed
+// the whole position distribution — re-run under the new balance, a
+// genuinely optimal squad now averages 5.88th (range 3rd-9th, 56%
+// playoff rate) and a genuinely gutted squad now averages ~16.5th (range
+// 14th-19th). Bands below are shifted to match, so grade still means what
+// it did before relative to real play quality, not stale absolute
+// positions that predate the fix.
 export const GRADE_BANDS = {
   backed: [
     { max: 2, grade: 'A+' },
-    { max: 8, grade: 'A' },
-    { max: 13, grade: 'B' },
-    { max: 18, grade: 'C' },
-    { max: 21, grade: 'D' },
+    { max: 6, grade: 'A' },
+    { max: 10, grade: 'B' },
+    { max: 13, grade: 'C' },
+    { max: 16, grade: 'D' },
     { max: 24, grade: 'F' },
   ],
   sensible: [
     { max: 2, grade: 'A+' },
-    { max: 8, grade: 'A' },
-    { max: 13, grade: 'B' },
-    { max: 18, grade: 'C' },
+    { max: 6, grade: 'A' },
+    { max: 10, grade: 'B' },
+    { max: 14, grade: 'C' },
     { max: 24, grade: 'D' },
   ],
   scr_watch: [
     { max: 2, grade: 'A+' },
-    { max: 13, grade: 'B' },
-    { max: 18, grade: 'C' },
+    { max: 10, grade: 'B' },
+    { max: 14, grade: 'C' },
     { max: 24, grade: 'D' },
   ],
 };
