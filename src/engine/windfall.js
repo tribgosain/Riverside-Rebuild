@@ -21,8 +21,11 @@ export const WINDFALL_EVENTS = [
     cutPercent: 20,
     // A fee this size is paid in installments over several seasons in
     // reality, not as one lump sum on completion — award only the first
-    // tranche, not the full sell-on cut.
-    installmentFraction: 0.4,
+    // tranche, not the full sell-on cut. Randomised within this range
+    // (not a fixed fraction) so the installment itself varies a bit
+    // run to run — lands roughly £2-5m across the fee range, a genuinely
+    // meaningful but not game-swinging top-up.
+    installmentFractionRange: [0.11, 0.19],
     clubs: ['Chelsea'],
     buildMessage: (fee, fullCut, awarded, club) =>
       `BREAKING — ${club} agree £${fee}m for Morgan Rogers. Boro's 20% sell-on cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
@@ -62,9 +65,12 @@ export function rollWindfall(state) {
   const event = pickWeighted(WINDFALL_EVENTS);
   const fee = randomInt(event.minFee, event.maxFee);
   const fullCut = Math.round(fee * (event.cutPercent / 100) * 10) / 10;
-  const awarded = event.installmentFraction
-    ? Math.round(fullCut * event.installmentFraction * 10) / 10
-    : fullCut;
+  let awarded = fullCut;
+  if (event.installmentFractionRange) {
+    const [min, max] = event.installmentFractionRange;
+    const fraction = min + Math.random() * (max - min);
+    awarded = Math.round(fullCut * fraction * 10) / 10;
+  }
   const club = event.clubs[Math.floor(Math.random() * event.clubs.length)];
 
   return { message: event.buildMessage(fee, fullCut, awarded, club), amount: awarded };
