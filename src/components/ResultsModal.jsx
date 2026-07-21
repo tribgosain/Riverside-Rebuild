@@ -218,11 +218,6 @@ export default function ResultsModal({ state, dispatch }) {
             ? 'Share does two things: copies this card as an image, then opens X in a new tab.'
             : 'Share does two things: downloads this card as an image, then opens X in a new tab.'}
       </p>
-      <div className="share-row">
-        <button type="button" className="secondary-btn share-row__share-btn" onClick={handleShare}>
-          {shareLabel}
-        </button>
-      </div>
       {!SUPPORTS_SHARE_FILES && (
         <p className="share-row__hint">
           {CAN_COPY_IMAGES
@@ -231,8 +226,11 @@ export default function ResultsModal({ state, dispatch }) {
         </p>
       )}
 
-      <div className="sticky-bar">
-        <button type="button" className="primary-btn" onClick={() => dispatch({ type: 'NEW_WINDOW' })}>
+      <div className="sticky-bar sticky-bar--footer">
+        <button type="button" className="primary-btn share-row__share-btn" onClick={handleShare}>
+          {shareLabel}
+        </button>
+        <button type="button" className="results-footer__replay" onClick={() => dispatch({ type: 'NEW_WINDOW' })}>
           Have another go
         </button>
       </div>

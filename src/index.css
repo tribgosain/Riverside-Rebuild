@@ -158,6 +158,14 @@ a:focus-visible {
   margin: 0 auto;
 }
 
+/* Results' sticky bar is two rows (Share button + the quiet replay link
+   below it) rather than the one-row bar every other screen uses, so it's
+   taller — bump the reserved bottom padding to match, or the last bit of
+   content (the share-row hint text) sits underneath it. */
+.results-screen {
+  padding-bottom: calc(130px + var(--safe-bottom));
+}
+
 .setup-footer {
   font-size: 12px;
   color: var(--text-dim);
@@ -193,6 +201,20 @@ a:focus-visible {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-dim);
+  text-align: center;
+}
+
+/* Results screen's replay action — deliberately quiet (plain text, no
+   button chrome) so Share reads as the one prominent action at the end
+   of the flow, not a coin-flip between two equal-weight buttons. */
+.results-footer__replay {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 14px;
+  padding: 4px 0;
+  min-height: 32px;
+  cursor: pointer;
   text-align: center;
 }
 
