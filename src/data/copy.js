@@ -249,6 +249,41 @@ export const KIT_COLOURWAYS = [
   },
 ];
 
+// Home stays red-and-white only — that's the identity, not a style choice
+// a "design your own" picker should be able to override. A small set of
+// shades within each colour still gives real customisation room.
+export const HOME_CUSTOM_PALETTE = {
+  primary: [
+    { value: '#E2231A', label: 'Boro Red' },
+    { value: '#C81E15', label: 'Deep Red' },
+    { value: '#A6291F', label: 'Brick Red' },
+  ],
+  trim: [
+    { value: '#FFFFFF', label: 'White' },
+    { value: '#F4F1EA', label: 'Ivory' },
+    { value: '#D9D4C7', label: 'Silver' },
+  ],
+};
+
+// Away gets real variance — colours Boro have actually worn in away/third
+// kits down the years, not an open colour wheel.
+export const AWAY_CUSTOM_PALETTE = {
+  primary: [
+    { value: '#F4F1EA', label: 'White' },
+    { value: '#F2C230', label: 'Yellow' },
+    { value: '#4FA8D8', label: 'Sky Blue' },
+    { value: '#1E2A5A', label: 'Navy' },
+    { value: '#2F6E4F', label: 'Green' },
+    { value: '#1B1B1D', label: 'Black' },
+  ],
+  trim: [
+    { value: '#E2231A', label: 'Red' },
+    { value: '#FFFFFF', label: 'White' },
+    { value: '#1E2A5A', label: 'Navy' },
+    { value: '#1B1B1D', label: 'Black' },
+  ],
+};
+
 export const PHILOSOPHIES = [
   {
     id: 'high_press',

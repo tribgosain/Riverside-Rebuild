@@ -833,6 +833,32 @@ a:focus-visible {
   color: var(--text);
 }
 
+.custom-kit-editor__note {
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.colour-swatch-row {
+  display: flex;
+  gap: 8px;
+}
+
+.colour-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  padding: 0;
+  cursor: pointer;
+}
+
+.colour-swatch--active {
+  border-color: var(--kit-primary);
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--kit-primary);
+}
+
 /* --- Task hub --- */
 
 .scorecard {

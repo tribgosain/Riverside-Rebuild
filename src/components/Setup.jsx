@@ -23,6 +23,10 @@ export default function Setup({ dispatch, challenge }) {
   const [customTrim, setCustomTrim] = useState('#FFFFFF');
   const [customPattern, setCustomPattern] = useState('solid');
   const [customNeck, setCustomNeck] = useState('v');
+  const [awayCustomPrimary, setAwayCustomPrimary] = useState('#F2C230');
+  const [awayCustomTrim, setAwayCustomTrim] = useState('#1E2A5A');
+  const [awayCustomPattern, setAwayCustomPattern] = useState('solid');
+  const [awayCustomNeck, setAwayCustomNeck] = useState('v');
   const [philosophyId, setPhilosophyId] = useState(null);
 
   // Landing <-> Decisions is a local stage switch, not a state.screen
@@ -40,7 +44,10 @@ export default function Setup({ dispatch, challenge }) {
     homeKitId === 'custom'
       ? { id: 'custom', name: 'Design your own', primary: customPrimary, trim: customTrim, pattern: customPattern, neck: customNeck }
       : KIT_COLOURWAYS.find((k) => k.id === homeKitId) || null;
-  const awayKitPreview = KIT_COLOURWAYS.find((k) => k.id === awayKitId) || null;
+  const awayKitPreview =
+    awayKitId === 'custom'
+      ? { id: 'custom', name: 'Design your own', primary: awayCustomPrimary, trim: awayCustomTrim, pattern: awayCustomPattern, neck: awayCustomNeck }
+      : KIT_COLOURWAYS.find((k) => k.id === awayKitId) || null;
 
   const allChosen = Boolean(
     trimmedName && mandateKey && sponsorId && sponsorAllowed && homeKitId && awayKitId && philosophyId
@@ -112,6 +119,14 @@ export default function Setup({ dispatch, challenge }) {
       setCustomPattern={setCustomPattern}
       customNeck={customNeck}
       setCustomNeck={setCustomNeck}
+      awayCustomPrimary={awayCustomPrimary}
+      setAwayCustomPrimary={setAwayCustomPrimary}
+      awayCustomTrim={awayCustomTrim}
+      setAwayCustomTrim={setAwayCustomTrim}
+      awayCustomPattern={awayCustomPattern}
+      setAwayCustomPattern={setAwayCustomPattern}
+      awayCustomNeck={awayCustomNeck}
+      setAwayCustomNeck={setAwayCustomNeck}
       philosophyId={philosophyId}
       setPhilosophyId={setPhilosophyId}
       allChosen={allChosen}

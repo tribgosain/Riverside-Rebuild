@@ -1,9 +1,30 @@
-import { MANDATES, SPONSORS, KIT_COLOURWAYS, PHILOSOPHIES, ROLE_LINE } from '../data/copy.js';
+import { MANDATES, SPONSORS, KIT_COLOURWAYS, HOME_CUSTOM_PALETTE, AWAY_CUSTOM_PALETTE, PHILOSOPHIES, ROLE_LINE } from '../data/copy.js';
 import SponsorMark from './visuals/SponsorMark.jsx';
 import KitShirt from './visuals/KitShirt.jsx';
 import PhilosophyIcon from './visuals/PhilosophyIcon.jsx';
 
 const SPONSOR_TIERS = ['local', 'national', 'international'];
+
+function ColourSwatchRow({ label, options, value, onChange }) {
+  return (
+    <label>
+      {label}
+      <div className="colour-swatch-row">
+        {options.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            className={`colour-swatch${value === o.value ? ' colour-swatch--active' : ''}`}
+            style={{ background: o.value }}
+            title={o.label}
+            aria-label={o.label}
+            onClick={() => onChange(o.value)}
+          />
+        ))}
+      </div>
+    </label>
+  );
+}
 
 // Screen 2 of the Setup flow — every decision (mandate, sponsor, home +
 // away kit, philosophy), all unselected by default per round17. The name
@@ -31,6 +52,14 @@ export default function Decisions({
   setCustomPattern,
   customNeck,
   setCustomNeck,
+  awayCustomPrimary,
+  setAwayCustomPrimary,
+  awayCustomTrim,
+  setAwayCustomTrim,
+  awayCustomPattern,
+  setAwayCustomPattern,
+  awayCustomNeck,
+  setAwayCustomNeck,
   philosophyId,
   setPhilosophyId,
   allChosen,
@@ -133,14 +162,19 @@ export default function Decisions({
 
         {homeKitId === 'custom' && (
           <div className="custom-kit-editor">
-            <label>
-              Body colour
-              <input type="color" value={customPrimary} onChange={(e) => setCustomPrimary(e.target.value)} />
-            </label>
-            <label>
-              Trim (neck &amp; sleeves)
-              <input type="color" value={customTrim} onChange={(e) => setCustomTrim(e.target.value)} />
-            </label>
+            <p className="custom-kit-editor__note">Home stays red and white — the shirt colour, not a style choice.</p>
+            <ColourSwatchRow
+              label="Body colour"
+              options={HOME_CUSTOM_PALETTE.primary}
+              value={customPrimary}
+              onChange={setCustomPrimary}
+            />
+            <ColourSwatchRow
+              label="Trim (neck & sleeves)"
+              options={HOME_CUSTOM_PALETTE.trim}
+              value={customTrim}
+              onChange={setCustomTrim}
+            />
             <label>
               Neck style
               <select value={customNeck} onChange={(e) => setCustomNeck(e.target.value)}>
@@ -187,7 +221,49 @@ export default function Decisions({
               <div className="pick-card__title">{k.name}</div>
             </button>
           ))}
+          <button
+            type="button"
+            className={`pick-card pick-card--visual pick-card--kit${awayKitId === 'custom' ? ' pick-card--active' : ''}`}
+            onClick={() => setAwayKitId('custom')}
+          >
+            <KitShirt primary={awayCustomPrimary} trim={awayCustomTrim} pattern={awayCustomPattern} neck={awayCustomNeck} size={48} uid="away-custom-chip" />
+            <div className="pick-card__title">Design your own</div>
+          </button>
         </div>
+
+        {awayKitId === 'custom' && (
+          <div className="custom-kit-editor">
+            <p className="custom-kit-editor__note">Away has more room to move — pick from colours Boro have actually worn on the road.</p>
+            <ColourSwatchRow
+              label="Body colour"
+              options={AWAY_CUSTOM_PALETTE.primary}
+              value={awayCustomPrimary}
+              onChange={setAwayCustomPrimary}
+            />
+            <ColourSwatchRow
+              label="Trim (neck & sleeves)"
+              options={AWAY_CUSTOM_PALETTE.trim}
+              value={awayCustomTrim}
+              onChange={setAwayCustomTrim}
+            />
+            <label>
+              Neck style
+              <select value={awayCustomNeck} onChange={(e) => setAwayCustomNeck(e.target.value)}>
+                <option value="v">V-neck</option>
+                <option value="crew">Crew</option>
+                <option value="collar">Collar</option>
+              </select>
+            </label>
+            <label>
+              Pattern
+              <select value={awayCustomPattern} onChange={(e) => setAwayCustomPattern(e.target.value)}>
+                <option value="solid">Plain</option>
+                <option value="band">Chest band</option>
+                <option value="pinstripe">Pinstripes</option>
+              </select>
+            </label>
+          </div>
+        )}
       </section>
 
       <div className="girder-divider" />
