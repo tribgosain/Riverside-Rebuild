@@ -18,13 +18,13 @@
   { "id": "p15", "name": "Leo Castledine", "pos": "MF", "role": "AM", "age": 20, "ovr": 64, "value": 1.7, "wage": 12, "localLad": false, "_unresolvedNote": "Round24: one lower-reliability source claims a permanent Leo Castledine signing FROM Chelsea this summer, conflicting with this existing academy-player entry (round11 tag fix). That source also had another claim that looked wrong on its face, so treat it as unverified. Not actioned — needs a better source confirming same/different player before this entry changes." },
   { "id": "p16", "name": "Myles Peart-Harris", "pos": "MF", "role": "AM", "age": 23, "ovr": 61, "value": 0.8, "wage": 10, "localLad": false, "status": "recent-signing", "blurb": "Boro's first signing of the summer, free from Oxford on a four-year deal — still bedding in, not deadweight." },
 
-  { "id": "p17", "name": "Jeremy Sarmiento", "pos": "FW", "role": "LW", "age": 24, "ovr": 69, "value": 4.3, "wage": 23, "localLad": false },
+  { "id": "p17", "name": "Jeremy Sarmiento", "pos": "FW", "role": "LW", "age": 24, "ovr": 69, "value": 4.3, "wage": 23, "localLad": false, "status": "recent-signing", "blurb": "Signed from Brighton just weeks ago — pace to burn, end product still developing, not one to be calling surplus already." },
   { "id": "p18", "name": "Delano Burgzorg", "pos": "FW", "role": "LW", "age": 27, "ovr": 67, "value": 2.6, "wage": 18, "localLad": false, "status": "future-uncertain", "blurb": "Started last season well, but a move away is reportedly being weighed by both club and player — his future isn't settled." },
   { "id": "p19", "name": "Micah Hamilton", "pos": "FW", "role": "LW", "age": 22, "ovr": 64, "value": 1.5, "wage": 13, "localLad": false, "status": "future-uncertain", "blurb": "Left out of the pre-season squad entirely — City hold a buy-back clause, and this looks like a loan or permanent exit before deadline day." },
   { "id": "p20", "name": "Morgan Whittaker", "pos": "FW", "role": "RW", "age": 25, "ovr": 79, "value": 15.5, "wage": 38, "localLad": false },
   { "id": "p21", "name": "Sontje Hansen", "pos": "FW", "role": "RW", "age": 24, "ovr": 67, "value": 3.0, "wage": 18, "localLad": false },
   { "id": "p22", "name": "Tommy Conway", "pos": "FW", "role": "ST", "age": 23, "ovr": 77, "value": 12.0, "wage": 34, "localLad": false },
   { "id": "p23", "name": "David Strelec", "pos": "FW", "role": "ST", "age": 25, "ovr": 74, "value": 7.0, "wage": 28, "localLad": false },
-  { "id": "p24", "name": "Kyle Joseph", "pos": "FW", "role": "ST", "age": 24, "ovr": 70, "value": 5.0, "wage": 22, "localLad": false },
+  { "id": "p24", "name": "Kyle Joseph", "pos": "FW", "role": "ST", "age": 24, "ovr": 70, "value": 5.0, "wage": 22, "localLad": false, "status": "recent-signing", "blurb": "Signed from Hull just weeks ago — the plan-B striker option, still bedding into the side, not deadweight." },
   { "id": "p25", "name": "Kaly Sène", "pos": "FW", "role": "ST", "age": 25, "ovr": 65, "value": 1.7, "wage": 14, "localLad": false }
 ]
