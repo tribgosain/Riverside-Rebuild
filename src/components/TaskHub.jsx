@@ -1,20 +1,11 @@
-import { MANDATES, BOARD_PATIENCE_COPY } from '../data/copy.js';
 import { canSimulate } from '../state/taskGate.js';
 
-function patienceBand(patience) {
-  if (patience <= 20) return 'furious';
-  if (patience <= 40) return 'wobble';
-  return 'steady';
-}
-
 export default function TaskHub({ state, dispatch }) {
-  const mandate = MANDATES[state.manager.mandate];
   const totalIn = state.transfersIn.reduce((s, t) => s + t.fee, 0);
   const totalOut = state.transfersOut.reduce((s, t) => s + t.fee, 0);
   const net = round2(totalIn - totalOut);
   const wageSpent = state.wageCapTotal - state.wageCapRemaining;
   const ready = canSimulate(state);
-  const band = patienceBand(state.boardPatience);
 
   const tasks = [
     { key: 'sell', label: 'Sell', done: state.tasks.sell, desc: 'Move players on, free up budget & squad space.' },
@@ -30,7 +21,6 @@ export default function TaskHub({ state, dispatch }) {
           <span className="scorecard__hero-value">
             {net >= 0 ? '+' : ''}£{net.toFixed(2)}m
           </span>
-          <span className="scorecard__hero-sub">of £{mandate.budget}m mandate ceiling</span>
         </div>
         <div className="scorecard__grid">
           <div className="scorecard__stat">
@@ -54,10 +44,6 @@ export default function TaskHub({ state, dispatch }) {
             <span className="scorecard__stat-value">{state.squad.length}</span>
           </div>
         </div>
-      </div>
-
-      <div className="patience-meter">
-        {BOARD_PATIENCE_COPY[band]}
       </div>
 
       <div className="task-tiles">

@@ -913,11 +913,6 @@ a:focus-visible {
   color: var(--text);
 }
 
-.scorecard__hero-sub {
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
 .scorecard__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -944,14 +939,6 @@ a:focus-visible {
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
-}
-
-.patience-meter {
-  font-size: 14px;
-  color: var(--text-dim);
-  background: var(--bg-elevated);
-  border-radius: var(--radius);
-  padding: 10px 14px;
 }
 
 .nudge {
@@ -1070,6 +1057,13 @@ a:focus-visible {
   margin-bottom: 8px;
   padding-bottom: 4px;
   border-bottom: 1px solid var(--border);
+}
+
+.position-group__count {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: normal;
+  color: var(--text-faint);
 }
 
 .player-card {
@@ -1544,6 +1538,12 @@ a:focus-visible {
 
 /* --- Results card: Wrapped-style asymmetric composition --- */
 
+/* Round30 redesign — rebuilt as a self-explanatory shareable artifact for
+   someone with zero app context (see ResultsModal.jsx for the content-
+   hierarchy reasoning). Normal top-to-bottom flex flow instead of the
+   old scattered/rotated absolutely-positioned pieces: easier to guarantee
+   the required reading order, and nothing risks bleeding off the card
+   edge or reading as an unpolished flourish to a first-time viewer. */
 .wrapped-card {
   position: relative;
   width: 100%;
@@ -1555,106 +1555,123 @@ a:focus-visible {
   box-shadow: var(--shadow-card);
 }
 
-.wrapped-card__wedge {
-  position: absolute;
-  left: -8%;
-  bottom: -8%;
-  width: 75%;
-  height: 58%;
-  background: #000;
-  opacity: 0.24;
-  clip-path: polygon(0 100%, 100% 100%, 0 0);
-  z-index: 1;
-}
-
 .wrapped-card__shirt {
   position: absolute;
-  right: -18%;
-  bottom: -6%;
-  opacity: 0.16;
-  transform: rotate(10deg);
+  right: -14%;
+  bottom: -4%;
+  opacity: 0.1;
+  transform: rotate(8deg);
   z-index: 0;
   pointer-events: none;
 }
 
-.wrapped-card__top {
-  position: absolute;
-  top: 16px;
-  left: 16px;
+/* Three groups (top-block / headline / bottom-block), space-between so
+   the card's tall 3:4 shape gets real, even breathing room top-to-bottom
+   instead of either cramming everything into the top third or dumping
+   all the slack into one gap via a single auto-margin push. */
+.wrapped-card__content {
+  position: relative;
+  z-index: 2;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 3;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px 20px 16px;
+  box-sizing: border-box;
 }
 
+/* 1. Brand — the one thing a stranger needs to identify this card by,
+   so it comes first, not buried in a corner watermark. */
+.wrapped-card__brand {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 4.5vw, 19px);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.wrapped-card__brand em {
+  font-style: normal;
+  opacity: 0.7;
+}
+
+.wrapped-card__mandate-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+/* Mandate needs to be self-explanatory out of context (round30) — paired
+   with what it actually means (budget), not a bare tag that only makes
+   sense to someone who's already played. */
 .wrapped-card__mandate {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+
+/* 2. Headline — grade + final position/outcome. This is what the card is
+   FOR; it has to dominate the composition at a glance, sized well above
+   everything else on the card but still fully contained (no rotation, no
+   bleeding off the edge) so it reads as a deliberate headline rather than
+   a decorative flourish. */
+.wrapped-card__headline {
+  margin-bottom: 20px;
 }
 
 .wrapped-card__grade {
-  position: absolute;
-  top: -0.06em;
-  right: -0.03em;
   font-family: var(--font-display);
-  font-size: clamp(110px, 34vw, 168px);
+  font-size: clamp(96px, 32vw, 148px);
   font-weight: 900;
-  line-height: 0.8;
-  z-index: 2;
-  transform: rotate(-3deg);
-  text-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  line-height: 0.82;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
 }
 
 .wrapped-card__position {
-  position: absolute;
-  top: 42%;
-  left: 18px;
   font-family: var(--font-display);
-  font-size: clamp(30px, 9vw, 42px);
-  font-weight: 900;
-  z-index: 2;
-  transform: rotate(-3deg);
+  font-size: clamp(26px, 7.5vw, 36px);
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -0.01em;
+  margin-top: 2px;
 }
 
 .wrapped-card__position sup {
-  font-size: 0.45em;
-  top: -0.8em;
+  font-size: 0.5em;
+  top: -0.7em;
 }
 
 /* Longer outcome strings ("FINAL DEFEAT", "SEMI-FINAL EXIT") need to wrap
    within the card instead of running at the same size as a 2-character
    position + suffix. */
 .wrapped-card__position--outcome {
-  font-size: clamp(22px, 7vw, 30px);
-  max-width: 62%;
-  line-height: 1.05;
+  font-size: clamp(22px, 6.5vw, 28px);
+  max-width: 90%;
+  line-height: 1.1;
 }
 
 .wrapped-card__outcome {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 4px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-top: 6px;
 }
 
-.wrapped-card__bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3;
-  padding: 18px 18px 44px;
-}
-
+/* 3. Season stats. */
+/* Pushed toward the bottom of the card regardless of how tall the
+   headline block above ends up (short "9TH" vs long "SEMI-FINAL EXIT"),
+   so the composition uses the full height of the 3:4 card instead of
+   leaving a dead gap in the middle on shorter outcomes. */
 .wrapped-card__manager {
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 800;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .wrapped-card__stats {
@@ -1662,27 +1679,28 @@ a:focus-visible {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-variant-numeric: tabular-nums;
 }
 
+/* 4. Recap/explanation text — last in the hierarchy but still legible,
+   not an afterthought caption (was 12px at 0.85 opacity before). */
 .wrapped-card__grade-note {
-  font-size: 12px;
-  opacity: 0.85;
+  font-size: 13.5px;
+  line-height: 1.4;
+  opacity: 0.92;
   margin: 0;
-  max-width: 94%;
+  max-width: 96%;
 }
 
 .wrapped-card__watermark {
-  position: absolute;
-  bottom: 10px;
-  right: 14px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
   font-size: 10px;
-  opacity: 0.75;
+  opacity: 0.6;
   letter-spacing: 0.04em;
-  z-index: 3;
 }
 
 .share-row {

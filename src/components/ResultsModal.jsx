@@ -20,27 +20,30 @@ const SUPPORTS_SHARE_FILES = (() => {
     return false;
   }
 })();
-// A plain, transparent readout of the actual grading logic — position
-// relative to the chosen mandate's grade bands (engine/grade.js) — not
-// flavour text. Wording is keyed off the letter grade itself, since that
-// letter is already computed relative to the mandate (see GRADE_BANDS).
-// Calibrated against round23's real 25-run test: even genuinely optimal
-// play only reached the playoffs 28% of the time, so a B here explicitly
-// says missing them isn't a letdown — it's the normal outcome of a good
-// window, not a shortfall.
+// A plain, transparent readout of the actual grading logic — not flavour
+// text. Round30: one uniform standard regardless of mandate — this club
+// reached a real playoff final last season, so playoffs is the floor no
+// matter how constrained the budget was. Wording reflects that
+// philosophy directly: A+ is the actual goal (promotion), A is the
+// minimum acceptable outcome (playoffs), anything below that is a real
+// miss, graded on how far below.
 const GRADE_EXPLANATION = {
-  'A+': 'a huge overachievement — very few windows reach this',
-  A: 'genuinely strong form, right in playoff contention',
-  B: "a good season — missing the playoffs from here is the normal outcome of strong play, not a shortfall",
-  C: 'below what a well-run window should produce',
-  D: 'well below what the board backed you to deliver',
+  'A+': 'promotion — the actual goal, delivered',
+  A: 'playoffs reached — the floor, minimum acceptable',
+  C: 'missed the playoffs — below the minimum expectation',
+  D: 'well below what the season needed to deliver',
   F: 'relegation-level underperformance',
 };
 
-function gradeExplanation({ promoted, mandateLabel, position, grade }) {
-  if (promoted) return `Promoted via the playoffs on a ${mandateLabel} mandate — the board can't ask for more than that.`;
+// Round30: rewritten to be a self-contained recap sentence — the card's
+// mandate line and headline (grade+position) already show that context
+// elsewhere on the redesigned card, so this doesn't need to repeat them,
+// just state the qualitative read plainly for whoever's looking at the
+// card with none of that context pre-loaded (e.g. a stranger on X).
+function gradeExplanation({ promoted, position, grade }) {
+  if (promoted) return "Promoted via the playoffs — the board can't ask for more than that.";
   const posText = `${position}${ordinalSuffix(position)}`;
-  return `${posText} on a ${mandateLabel} mandate — ${GRADE_EXPLANATION[grade] || 'graded against the board mandate.'}`;
+  return `Finished ${posText} — ${GRADE_EXPLANATION[grade] || 'graded against a uniform playoffs-as-floor standard.'}`;
 }
 
 export default function ResultsModal({ state, dispatch }) {
@@ -79,10 +82,14 @@ export default function ResultsModal({ state, dispatch }) {
 
   const gradeNote = gradeExplanation({
     promoted,
-    mandateLabel: mandate.label,
     position: season.boroPosition,
     grade: season.grade,
   });
+
+  // Computed from the actual page, not hardcoded — so this never goes
+  // stale again the way the old hardcoded "riverside-rebuild.pages.dev"
+  // watermark did (this project has moved hosts more than once).
+  const shareDomain = typeof window !== 'undefined' ? window.location.host : 'riverside-rebuild';
 
   function shareText() {
     const outcome = promoted
@@ -173,42 +180,59 @@ export default function ResultsModal({ state, dispatch }) {
   return (
     <div className="screen results-screen">
       <div className="wrapped-card" ref={cardRef} style={{ '--kit-primary': kit.primary, '--kit-trim': kit.trim }}>
-        <div className="wrapped-card__wedge" />
-
         <div className="wrapped-card__shirt">
           <KitShirt primary={kit.trim} trim={kit.primary} pattern={kit.pattern} neck={kit.neck} size={340} uid="wrapped" />
         </div>
 
-        <div className="wrapped-card__top">
-          <SponsorBadge sponsor={sponsor} size={30} />
-          <span className="wrapped-card__mandate">{mandate.label}</span>
-        </div>
+        {/* Round30 redesign — content hierarchy for a stranger seeing only
+            this image with no app context, in this exact order:
+            1. brand, 2. grade+position (the headline), 3. stats,
+            4. recap text. A mini league table was deliberately left out —
+            at social-share thumbnail sizes a table would either be
+            illegible or would force everything above it smaller, which
+            trades away the hierarchy this was redesigned around. */}
+        <div className="wrapped-card__content">
+          <div className="wrapped-card__top-block">
+            <div className="wrapped-card__brand">
+              RIVERSIDE <em>REBUILD</em>
+            </div>
 
-        <div className="wrapped-card__grade">{season.grade}</div>
-
-        <div className={`wrapped-card__position${positionLabel ? ' wrapped-card__position--outcome' : ''}`}>
-          {positionLabel || (
-            <>
-              {season.boroPosition}
-              <sup>{ordinalSuffix(season.boroPosition)}</sup>
-            </>
-          )}
-        </div>
-
-        <div className="wrapped-card__bottom">
-          {outcomeStatement && <div className="wrapped-card__outcome">{outcomeStatement}</div>}
-          <div className="wrapped-card__manager">{state.manager.name}'s Boro</div>
-
-          <div className="wrapped-card__stats">
-            <span>{season.boroRecord.w}W {season.boroRecord.d}D {season.boroRecord.l}L</span>
-            <span>{season.boroPoints} pts</span>
-            <span>Net {net >= 0 ? '+' : ''}£{net.toFixed(2)}m</span>
+            <div className="wrapped-card__mandate-row">
+              <SponsorBadge sponsor={sponsor} size={22} />
+              <span className="wrapped-card__mandate">
+                {mandate.label} mandate &middot; £{mandate.budget}m budget
+              </span>
+            </div>
           </div>
 
-          <p className="wrapped-card__grade-note">{gradeNote}</p>
-        </div>
+          <div className="wrapped-card__headline">
+            <div className="wrapped-card__grade">{season.grade}</div>
+            <div className={`wrapped-card__position${positionLabel ? ' wrapped-card__position--outcome' : ''}`}>
+              {positionLabel || (
+                <>
+                  {season.boroPosition}
+                  <sup>{ordinalSuffix(season.boroPosition)}</sup>
+                </>
+              )}
+            </div>
+            {outcomeStatement && <div className="wrapped-card__outcome">{outcomeStatement}</div>}
+          </div>
 
-        <div className="wrapped-card__watermark">riverside-rebuild.pages.dev</div>
+          <div className="wrapped-card__bottom-block">
+            <div className="wrapped-card__lower">
+              <div className="wrapped-card__manager">{state.manager.name}'s Boro</div>
+              <div className="wrapped-card__stats">
+                <span>{season.boroRecord.w}W {season.boroRecord.d}D {season.boroRecord.l}L</span>
+                <span>{season.boroPoints} pts</span>
+                <span>Net {net >= 0 ? '+' : ''}£{net.toFixed(2)}m</span>
+              </div>
+
+              <p className="wrapped-card__grade-note">{gradeNote}</p>
+            </div>
+
+            <div className="wrapped-card__watermark">{shareDomain}</div>
+          </div>
+        </div>
       </div>
 
       <p className="share-row__hint share-row__hint--before">

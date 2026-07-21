@@ -10,7 +10,19 @@
 // Hackney: he only just left for Everton this summer, so a same-window
 // resale isn't realistic even as a game event.
 
-const PER_ACTION_CHANCE = 0.01; // ~8-15% cumulative across a typical window's sell/sign actions
+// Round30: verified the trigger logic was genuinely wired correctly
+// (rollWindfall() is called from both Sell and Sign, on every sell/trim/
+// sign/auto-fill action, and WINDFALL_EVENT correctly credits the budget
+// and sets windfallFired) — the "hasn't been seen firing" reports weren't
+// a wiring bug. But empirical simulation at 0.01 confirmed the concern
+// anyway: at a realistic ~15 actions per window, Morgan Rogers
+// specifically only fired ~11% of the time, meaning fewer than half of
+// players trying 5 separate playthroughs would ever see it. Raised to
+// 0.02 (~20% per playthrough, ~69% chance of seeing Rogers across 5
+// tries, empirically checked the same way) — still feels like a genuine
+// rare event on any single window, no longer "essentially never happens
+// in practice."
+const PER_ACTION_CHANCE = 0.02; // ~15-25% cumulative across a typical window's sell/sign actions
 
 export const WINDFALL_EVENTS = [
   {

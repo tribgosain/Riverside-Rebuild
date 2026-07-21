@@ -59,6 +59,14 @@ export default function SignTask({ state, dispatch }) {
       .sort((a, b) => b.tags.length - a.tags.length || b.player.ovr - a.player.ovr),
   }));
 
+  // Squad count at this role, not the market list's row count — the point
+  // is surfacing squad gaps ("you only have 1 CB") while browsing targets
+  // for that position, not how many are available to buy.
+  const squadCountByRole = {};
+  for (const p of state.squad) {
+    squadCountByRole[p.role] = (squadCountByRole[p.role] || 0) + 1;
+  }
+
   function handleSign(player, tags) {
     dispatch({ type: 'SIGN_PLAYER', payload: { playerId: player.id } });
     const windfall = rollWindfall(state);
@@ -187,7 +195,9 @@ export default function SignTask({ state, dispatch }) {
 
       {groups.map((g) => (
         <div key={g.role} className="position-group">
-          <div className="position-group__header">{g.label}</div>
+          <div className="position-group__header">
+            {g.label} <span className="position-group__count">({squadCountByRole[g.role] || 0})</span>
+          </div>
           <ul className="player-list">
             {g.rows.map(({ player: p, tags }) => {
               const canAffordFee = p.value <= state.budget + 1e-9;

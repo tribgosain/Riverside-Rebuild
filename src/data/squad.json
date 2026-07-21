@@ -11,7 +11,7 @@
   { "id": "p09", "name": "Callum Brittain", "pos": "DF", "role": "RB", "age": 28, "ovr": 72, "value": 6.0, "wage": 25, "localLad": false },
   { "id": "p10", "name": "Luke Ayling", "pos": "DF", "role": "RB", "age": 34, "ovr": 66, "value": 0.35, "wage": 18, "localLad": false },
 
-  { "id": "p11", "name": "Abdoulaye Kanté", "pos": "MF", "role": "CDM", "age": 21, "ovr": 68, "value": 4.5, "wage": 16, "localLad": false, "flag": "future_in_doubt" },
+  { "id": "p11", "name": "Abdoulaye Kanté", "pos": "MF", "role": "CDM", "age": 21, "ovr": 68, "value": 1.8, "wage": 16, "localLad": false, "flag": "future_in_doubt" },
   { "id": "p12", "name": "Aidan Morris", "pos": "MF", "role": "CM", "age": 24, "ovr": 76, "value": 8.5, "wage": 32, "localLad": false },
   { "id": "p13", "name": "Riley McGree", "pos": "MF", "role": "CM", "age": 27, "ovr": 71, "value": 3.0, "wage": 22, "localLad": false },
   { "id": "p14", "name": "Law McCabe", "pos": "MF", "role": "CM", "age": 20, "ovr": 56, "value": 0.1, "wage": 6, "localLad": true },

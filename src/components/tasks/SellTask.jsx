@@ -113,7 +113,9 @@ export default function SellTask({ state, dispatch }) {
 
       {groups.map((g) => (
         <div key={g.role} className="position-group">
-          <div className="position-group__header">{g.label}</div>
+          <div className="position-group__header">
+            {g.label} <span className="position-group__count">({g.rows.length})</span>
+          </div>
           <ul className="player-list">
             {g.rows.map(({ player: p, tags }) => (
               <PlayerRow

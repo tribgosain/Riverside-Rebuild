@@ -72,7 +72,7 @@ export default function PlayoffTask({ state, dispatch }) {
       result = final.winnerId === BORO_ID ? 'promoted' : 'lost_final';
     }
 
-    const { grade } = gradeForSeason({ mandate: state.manager.mandate, position: boroPos, playoff: { result } });
+    const { grade } = gradeForSeason({ position: boroPos, playoff: { result } });
 
     dispatch({
       type: 'PLAYOFF_COMPLETE',

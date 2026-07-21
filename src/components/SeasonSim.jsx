@@ -35,7 +35,7 @@ function computeSeason(state) {
   const boroRow = standings.find((r) => r.id === BORO_ID);
   const position = findPosition(standings, BORO_ID);
   const playoffEligible = position >= 3 && position <= 6;
-  const grade = gradeForPosition(state.manager.mandate, position);
+  const grade = gradeForPosition(position);
 
   const boroMatches = matches.filter((m) => m.homeId === BORO_ID || m.awayId === BORO_ID);
 

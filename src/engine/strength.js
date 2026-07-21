@@ -22,6 +22,29 @@ export function formationRequirements(formation) {
   return { GK: 1, ...shape };
 }
 
+// Round30: WILDCARD-tagged players (market.json's genuine unknowns — raw
+// foreign prospects, smokescreen-or-real rumours) previously carried the
+// tag purely as UI flavour (a chip + a ticker line) with zero mechanical
+// effect — they contributed the exact same fixed OVR as any other
+// signing every single time, which isn't what "wildcard" is supposed to
+// mean. This applies a real per-simulation swing instead: a wildcard's
+// effective contribution is randomised within +/-WILDCARD_VARIANCE OVR
+// points, re-rolled fresh each time xiStrength is actually called (i.e.
+// each time a season or playoff round is simulated — see SeasonSim.jsx/
+// PlayoffTask.jsx), so the same wildcard signing can bust well below a
+// normal squad player or boom into genuine star territory depending on
+// the run. Deliberately not touching bestXI()'s selection order (still
+// sorts by raw ovr) — you pick a wildcard on its known ceiling/reputation
+// same as real recruitment, and only find out how it actually turned out
+// once the season plays.
+const WILDCARD_VARIANCE = 12;
+
+function effectiveOvr(player) {
+  if (!player.wildcard) return player.ovr;
+  const swing = (Math.random() * 2 - 1) * WILDCARD_VARIANCE;
+  return Math.max(30, player.ovr + swing);
+}
+
 // xi: array of player objects (length 11, any order). Returns a 0-100ish
 // strength number used directly by the match simulator.
 //
@@ -36,7 +59,7 @@ export function formationRequirements(formation) {
 // XI and stops there — verified against real simulation runs (round17).
 export function xiStrength(xi, squadSize) {
   if (!xi || xi.length === 0) return 0;
-  const avgOvr = xi.reduce((sum, p) => sum + p.ovr, 0) / xi.length;
+  const avgOvr = xi.reduce((sum, p) => sum + effectiveOvr(p), 0) / xi.length;
   const depthBeyondFloor = Math.max(0, squadSize - SQUAD_FLOOR);
   const depthBonus = Math.min(12, depthBeyondFloor * 0.5);
   return avgOvr + depthBonus;
