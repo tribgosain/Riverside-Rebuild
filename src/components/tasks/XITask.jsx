@@ -62,9 +62,13 @@ export default function XITask({
 
   const required = formationRequirements(formation);
   const xiPlayers = xi.map((id) => squad.find((p) => p.id === id)).filter(Boolean);
-  const { legal, reasons } = checkXILegality(xiPlayers, formation);
-  const counts = xiPlayers.reduce((acc, p) => {
-    acc[p.pos] = (acc[p.pos] || 0) + 1;
+  const { legal, reasons } = checkXILegality(xiPlayers);
+  // Counted by which SLOT is filled, not the filled-in player's own listed
+  // position — a player can be fielded anywhere regardless of what the
+  // system thinks their natural position is, so a forward filling a
+  // midfield slot correctly counts as that slot's requirement being met.
+  const counts = layout.reduce((acc, slot, i) => {
+    if (slotMap[i]) acc[slot.pos] = (acc[slot.pos] || 0) + 1;
     return acc;
   }, {});
 
@@ -79,13 +83,16 @@ export default function XITask({
   const overflow = xiPlayers.filter((p) => !slottedIds.has(p.id));
 
   const activeSlot = activeSlotIndex !== null ? renderSlots[activeSlotIndex] : null;
+  // Any squad player can fill any slot — no pos/role restriction. Natural
+  // fits (matching role, then matching broad pos) sort to the top purely
+  // as a convenience, not a limit on who's selectable.
   const pickerOptions = activeSlot
     ? squad
-        .filter((p) => p.pos === activeSlot.pos && !xi.includes(p.id))
+        .filter((p) => !xi.includes(p.id))
         .sort((a, b) => {
-          const aExact = a.role === activeSlot.role ? 1 : 0;
-          const bExact = b.role === activeSlot.role ? 1 : 0;
-          if (aExact !== bExact) return bExact - aExact;
+          const aFit = a.role === activeSlot.role ? 2 : a.pos === activeSlot.pos ? 1 : 0;
+          const bFit = b.role === activeSlot.role ? 2 : b.pos === activeSlot.pos ? 1 : 0;
+          if (aFit !== bFit) return bFit - aFit;
           return b.ovr - a.ovr;
         })
     : [];

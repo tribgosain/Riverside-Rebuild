@@ -1,27 +1,21 @@
-import { formationRequirements } from '../engine/strength.js';
-
 // Checks whether the currently-selected XI (array of player objects) is a
-// legal fielding for the chosen formation. Returns { legal, reasons } so
-// callers can show a specific message ("need 4 DF, have 2") rather than a
-// generic error.
-export function checkXILegality(xi, formation) {
-  const required = formationRequirements(formation);
+// legal fielding. Returns { legal, reasons } so callers can show a
+// specific message rather than a generic error.
+//
+// Deliberately NOT checking position/role distribution against the
+// formation shape — any squad player can be fielded in any slot
+// regardless of their own listed position (a forward can play in a
+// midfield slot, etc.). The formation's shape is enforced by there being
+// exactly 11 pitch slots to fill in the UI (see XITask.jsx), not by
+// cross-checking each player's own pos label here — that's what
+// previously blocked legitimately full, deliberately-assembled XIs from
+// progressing whenever a player's labelled position didn't match the
+// slot they were placed in.
+export function checkXILegality(xi) {
   const reasons = [];
 
   if (xi.length !== 11) {
     reasons.push(`Need 11 players selected, have ${xi.length}.`);
-  }
-
-  const counts = xi.reduce((acc, p) => {
-    acc[p.pos] = (acc[p.pos] || 0) + 1;
-    return acc;
-  }, {});
-
-  for (const [pos, need] of Object.entries(required)) {
-    const have = counts[pos] || 0;
-    if (have !== need) {
-      reasons.push(`Need ${need} ${pos}, have ${have}.`);
-    }
   }
 
   return { legal: reasons.length === 0, reasons };
@@ -35,12 +29,12 @@ export function canSimulate(state) {
   if (!state.xi || state.xi.length !== 11) return false;
   const xiPlayers = state.xi.map((id) => state.squad.find((p) => p.id === id)).filter(Boolean);
   if (xiPlayers.length !== 11) return false;
-  return checkXILegality(xiPlayers, state.formation).legal;
+  return checkXILegality(xiPlayers).legal;
 }
 
 export function canSimulatePlayoff(state) {
   if (!state.playoffXi || state.playoffXi.length !== 11) return false;
   const xiPlayers = state.playoffXi.map((id) => state.squad.find((p) => p.id === id)).filter(Boolean);
   if (xiPlayers.length !== 11) return false;
-  return checkXILegality(xiPlayers, state.playoffFormation || state.formation).legal;
+  return checkXILegality(xiPlayers).legal;
 }
