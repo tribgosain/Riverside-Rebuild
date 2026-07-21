@@ -26,5 +26,6 @@
   { "id": "p22", "name": "Tommy Conway", "pos": "FW", "role": "ST", "age": 23, "ovr": 77, "value": 12.0, "wage": 34, "localLad": false },
   { "id": "p23", "name": "David Strelec", "pos": "FW", "role": "ST", "age": 25, "ovr": 74, "value": 7.0, "wage": 28, "localLad": false },
   { "id": "p24", "name": "Kyle Joseph", "pos": "FW", "role": "ST", "age": 24, "ovr": 70, "value": 5.0, "wage": 22, "localLad": false, "status": "recent-signing", "blurb": "Signed from Hull just weeks ago — the plan-B striker option, still bedding into the side, not deadweight." },
-  { "id": "p25", "name": "Kaly Sène", "pos": "FW", "role": "ST", "age": 25, "ovr": 65, "value": 1.7, "wage": 14, "localLad": false }
+  { "id": "p25", "name": "Kaly Sène", "pos": "FW", "role": "ST", "age": 25, "ovr": 65, "value": 1.7, "wage": 14, "localLad": false },
+  { "id": "p26", "name": "Will Lankshear", "pos": "FW", "role": "ST", "age": 21, "ovr": 70, "value": 6.5, "wage": 18, "localLad": false, "status": "recent-signing", "blurb": "Unfinished business resolved — the loan's been made permanent. Boro finally got their man after Spurs knocked back a January bid; still just 21, this is a real bet on what he becomes." }
 ]
