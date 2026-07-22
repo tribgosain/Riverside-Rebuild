@@ -208,7 +208,6 @@ export default function ResultsModal({ state, dispatch }) {
           </div>
 
           <div className="wrapped-card__headline">
-            <div className="wrapped-card__grade">{season.grade}</div>
             <div className={`wrapped-card__position${positionLabel ? ' wrapped-card__position--outcome' : ''}`}>
               {positionLabel || (
                 <>
@@ -218,6 +217,7 @@ export default function ResultsModal({ state, dispatch }) {
               )}
             </div>
             {outcomeStatement && <div className="wrapped-card__outcome">{outcomeStatement}</div>}
+            <div className="wrapped-card__grade">{season.grade}</div>
           </div>
 
           <div className="wrapped-card__bottom-block">
