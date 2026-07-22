@@ -2,6 +2,7 @@ import squadSeed from '../data/squad.json';
 import marketSeed from '../data/market.json';
 import { MANDATES, SPONSORS, KIT_COLOURWAYS, PHILOSOPHIES } from '../data/copy.js';
 import { SQUAD_FLOOR, SQUAD_CEILING } from '../engine/strength.js';
+import { rollWindfall } from '../engine/windfall.js';
 
 function clone(x) {
   return JSON.parse(JSON.stringify(x));
@@ -49,6 +50,12 @@ function mkFreshGame(payload) {
   }
   patience = Math.max(0, Math.min(100, patience));
 
+  // Rolled once, right here, before the window opens — so if it hits, it's
+  // waiting for the player as breaking news the moment the hub loads, never
+  // something that interrupts mid-Sell/Sign (see engine/windfall.js).
+  const windfall = rollWindfall();
+  const startingBudget = mandate.budget + sponsorBudgetBump;
+
   return {
     ...EMPTY_STATE,
     screen: 'hub',
@@ -59,8 +66,8 @@ function mkFreshGame(payload) {
     awayKit: payload.awayKit || null,
     philosophy: philosophy.id,
     boardPatience: patience,
-    budget: mandate.budget + sponsorBudgetBump,
-    budgetTotal: mandate.budget + sponsorBudgetBump,
+    budget: windfall ? round2(startingBudget + windfall.amount) : startingBudget,
+    budgetTotal: startingBudget,
     wageCapTotal: mandate.wageCap,
     wageCapRemaining: mandate.wageCap,
     squad: clone(squadSeed),
@@ -74,8 +81,8 @@ function mkFreshGame(payload) {
     playoffFormation: '4-3-3',
     playoffXi: [],
     playoff: null,
-    windfallFired: false,
-    windfallMessage: null,
+    windfallFired: !!windfall,
+    windfallMessage: windfall?.message || null,
   };
 }
 
@@ -120,22 +127,8 @@ export function gameReducer(state, action) {
       };
     }
 
-    case 'WINDFALL_EVENT': {
-      return {
-        ...state,
-        budget: round2(state.budget + action.payload.amount),
-        windfallFired: true,
-        // Round31 follow-up: a per-screen ticker line was getting silently
-        // overwritten by the very next sell/sign action's routine reaction
-        // text — real players clicking through a window in quick succession
-        // could genuinely never see this fire, even though it worked and
-        // credited the budget correctly. Lives on top-level state instead
-        // of screen-local ticker state so it survives navigation and stays
-        // up until explicitly dismissed (see DISMISS_WINDFALL below).
-        windfallMessage: action.payload.message,
-      };
-    }
-
+    // windfallMessage/windfallFired are set once, at window creation (see
+    // mkFreshGame) — DISMISS_WINDFALL just clears the banner once read.
     case 'DISMISS_WINDFALL': {
       return { ...state, windfallMessage: null };
     }

@@ -1,13 +1,17 @@
-// Rare mid-window surprise: a sell-on clause windfall. Rolled after each
-// sell/sign action (small per-action chance) so it can land at any random
-// point during the Sell/Sign phase, fires at most once per window.
+// Rare windfall: a Morgan Rogers sell-on clause payout. Rolled once, right
+// as a fresh window opens — before the player has sold or signed anyone —
+// not mid-action. Round31 follow-up #3: moved off a per-action cumulative
+// roll (which could land at any point mid-Sell/Sign) to a single roll at
+// window start, matching how this should read as breaking news waiting
+// for you at the desk, not something that interrupts you partway through
+// business.
 //
 // Morgan Rogers is real, current fact — not a flavour invention: Boro hold
 // a genuine 20% sell-on clause from his January 2024 sale to Aston Villa
 // (£15m fee). Villa are fielding real interest, and reporting has since
-// firmed up specifically on Chelsea (valuations reported £90-117m). Deliberately
-// NOT Hackney: he only just left for Everton this summer, so a same-window
-// resale isn't realistic even as a game event.
+// firmed up specifically on Chelsea (valuations reported £90-117m).
+// Deliberately NOT Hackney: he only just left for Everton this summer, so
+// a same-window resale isn't realistic even as a game event.
 //
 // Sell-on clauses are conventionally a cut of PROFIT, not the full resale
 // fee — Boro's 20% applies to what Villa actually made on the deal (resale
@@ -17,44 +21,16 @@
 // profit from selling him to Villa — but that clause was already settled
 // back in Jan 2024 and has no bearing on what Boro receive from Villa's
 // resale now, so it isn't modelled here. At fee £90-117m: profit £75-102m,
-// Boro's 20% cut £15-20.4m, first installment (11-19% of that) ~£1.65-3.9m
-// — lands around £3m at the upper end of the range.
-
-// Round30: verified the trigger logic was genuinely wired correctly
-// (rollWindfall() is called from both Sell and Sign, on every sell/trim/
-// sign/auto-fill action, and WINDFALL_EVENT correctly credits the budget
-// and sets windfallFired) — the "hasn't been seen firing" reports weren't
-// a wiring bug. But empirical simulation at 0.01 confirmed the concern
-// anyway: at a realistic ~15 actions per window, Morgan Rogers
-// specifically only fired ~11% of the time, meaning fewer than half of
-// players trying 5 separate playthroughs would ever see it. Raised to
-// 0.02, believed at the time to give ~20% per playthrough.
+// Boro's 20% cut £15-20.4m, first installment (11-19% of that) ~£1.65-3.9m.
 //
-// Round31: re-verified with an actual 1,000-window loop test
-// (scripts/round31-rogers-check.mjs) rather than trusting the round30
-// comment. The wiring/trigger logic itself is confirmed correct — 0.02
-// empirically produced Rogers in ~23% of windows and ~69% of 5-try
-// sequences, matching round30's math. So players reporting zero sightings
-// across several playthroughs were NOT hitting a bug — 0.02 was just
-// genuinely too low for a player to expect to see it within a handful of
-// tries. Raised to 0.035 (~35% per window), then confirmed working with a
-// real unforced fire on the live production site.
-//
-// Round31 follow-up: explicit request to make it a coin-flip per playthrough
-// rather than a rare bonus — raised again so Rogers specifically lands in
-// ~50% of individual windows (see scripts/round31-rogers-check.mjs for the
-// math/verification approach).
-//
-// Round31 follow-up #2: removed the generic "academy sell-on clause"
-// filler event entirely, per explicit request — this is a Morgan Rogers
-// moment specifically, not a slot machine that occasionally pays out
-// under a different, made-up pretext. Only one event now, so the
-// weighted-pick machinery that used to choose between events is gone too.
-// Every fire is now Rogers (previously only ~80% of fires were, split
-// with the removed event), so 0.062 would have pushed the per-window rate
-// up to ~63% — lowered to 0.045 to hold the ~50% target from the prior
-// follow-up (re-verified below).
-const PER_ACTION_CHANCE = 0.045; // ~50% cumulative across a typical window's sell/sign actions
+// Round31: verified the trigger logic was genuinely wired correctly, then
+// re-verified with real loop tests (scripts/round31-rogers-check.mjs) after
+// reports it "never fires" — root cause across several follow-ups turned
+// out to be probability tuned too low, then a visibility bug (screen-local
+// ticker text getting silently overwritten by the next action before a
+// real player could register it), not a wiring bug. WINDOW_CHANCE below is
+// tuned to land Rogers in ~50% of individual windows.
+const WINDOW_CHANCE = 0.5;
 
 export const WINDFALL_EVENT = {
   id: 'morgan_rogers',
@@ -67,36 +43,31 @@ export const WINDFALL_EVENT = {
   // A fee this size is paid in installments over several seasons in
   // reality, not as one lump sum on completion — award only the first
   // tranche, not the full sell-on cut. Randomised within this range
-  // (not a fixed fraction) so the installment itself varies a bit
-  // run to run — lands roughly £1.65-3.9m across the fee range, a
-  // genuinely meaningful but not game-swinging top-up.
+  // (not a fixed fraction) so the installment itself varies a bit run to
+  // run — lands roughly £1.65-3.9m across the fee range.
   installmentFractionRange: [0.11, 0.19],
-  clubs: ['Chelsea'],
-  buildMessage: (fee, fullCut, awarded, club, profit) =>
-    `BREAKING — ${club} agree £${fee}m for Morgan Rogers — Villa's profit on the £15m they paid Boro: £${profit}m. Boro's 20% cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
+  club: 'Chelsea',
+  buildMessage: (fee, fullCut, awarded, club) =>
+    `${club} agree £${fee}m fee for Morgan Rogers. Boro's 20% cut: £${fullCut}m — £${awarded}m lands in the budget now.`,
 };
 
 function randomInt(min, max) {
   return Math.floor(min + Math.random() * (max - min + 1));
 }
 
-// Call after a sell/sign action completes. Returns null most of the time;
-// returns { message, amount } on the rare roll that hits.
-export function rollWindfall(state) {
-  if (state.windfallFired) return null;
-  if (Math.random() > PER_ACTION_CHANCE) return null;
+// Call once when a fresh window opens (see gameReducer's mkFreshGame).
+// Returns null most of the time; returns { message, amount } on the roll
+// that hits.
+export function rollWindfall() {
+  if (Math.random() > WINDOW_CHANCE) return null;
 
   const event = WINDFALL_EVENT;
   const fee = randomInt(event.minFee, event.maxFee);
   const profit = fee - event.originalFee;
   const fullCut = Math.round(profit * (event.cutPercent / 100) * 10) / 10;
-  let awarded = fullCut;
-  if (event.installmentFractionRange) {
-    const [min, max] = event.installmentFractionRange;
-    const fraction = min + Math.random() * (max - min);
-    awarded = Math.round(fullCut * fraction * 10) / 10;
-  }
-  const club = event.clubs[Math.floor(Math.random() * event.clubs.length)];
+  const [min, max] = event.installmentFractionRange;
+  const fraction = min + Math.random() * (max - min);
+  const awarded = Math.round(fullCut * fraction * 10) / 10;
 
-  return { message: event.buildMessage(fee, fullCut, awarded, club, profit), amount: awarded };
+  return { message: event.buildMessage(fee, fullCut, awarded, event.club), amount: awarded };
 }

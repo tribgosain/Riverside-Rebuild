@@ -3,7 +3,6 @@ import { SQUAD_CEILING } from '../../engine/strength.js';
 import { computeSquadStats, computeBargainThreshold, tagSignTarget } from '../../engine/recommendations.js';
 import { groupByRole } from '../../engine/positionGroups.js';
 import { TICKER_OPENING, TICKER_REACTIONS, SQUAD_NEEDS } from '../../data/copy.js';
-import { rollWindfall } from '../../engine/windfall.js';
 import GameShell from '../shell/GameShell.jsx';
 import PlayerRow from '../shell/PlayerRow.jsx';
 
@@ -39,9 +38,9 @@ export default function SignTask({ state, dispatch }) {
   const atCeiling = state.squad.length >= SQUAD_CEILING;
 
   const hiddenTargets = state.market.filter((p) => p.hidden);
-  // The full pool, tier/position filtering aside — Auto-fill needs and the
-  // windfall roll search across everything, not just whichever tab/chip the
-  // person happens to be looking at.
+  // The full pool, tier/position filtering aside — Auto-fill needs searches
+  // across everything, not just whichever tab/chip the person happens to be
+  // looking at.
   const visibleMarket = state.market.filter((p) => !p.hidden || scoutRevealed);
 
   const tierFilteredMarket = visibleMarket.filter((p) => p.tier === activeTier);
@@ -69,14 +68,6 @@ export default function SignTask({ state, dispatch }) {
 
   function handleSign(player, tags) {
     dispatch({ type: 'SIGN_PLAYER', payload: { playerId: player.id } });
-    const windfall = rollWindfall(state);
-    if (windfall) {
-      // Shown via the persistent top-level windfall banner (App.jsx), not
-      // the local ticker — a screen-local ticker line gets overwritten by
-      // the very next action and is too easy to miss entirely.
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
-      return;
-    }
     if (player.value >= 6) setTicker(pick(TICKER_REACTIONS.sign_headline));
     else if (tags.includes('wildcard')) setTicker(pick(TICKER_REACTIONS.sign_wildcard));
   }
@@ -105,14 +96,6 @@ export default function SignTask({ state, dispatch }) {
       wageCap -= candidate.wage;
       squadSize += 1;
       filledAny = true;
-    }
-    const windfall = filledAny ? rollWindfall(state) : null;
-    if (windfall) {
-      // Shown via the persistent top-level windfall banner (App.jsx), not
-      // the local ticker — a screen-local ticker line gets overwritten by
-      // the very next action and is too easy to miss entirely.
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
-      return;
     }
     setTicker(filledAny ? pick(TICKER_REACTIONS.sign_headline) : pick(TICKER_REACTIONS.budget_wall));
   }

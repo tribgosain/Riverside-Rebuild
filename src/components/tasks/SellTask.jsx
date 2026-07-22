@@ -3,7 +3,6 @@ import { SQUAD_FLOOR } from '../../engine/strength.js';
 import { computeSquadStats, computeKeyAssetIds, computeOverstockedIds, tagSellCandidate } from '../../engine/recommendations.js';
 import { groupByRole } from '../../engine/positionGroups.js';
 import { TICKER_OPENING, TICKER_REACTIONS } from '../../data/copy.js';
-import { rollWindfall } from '../../engine/windfall.js';
 import GameShell from '../shell/GameShell.jsx';
 import PlayerRow from '../shell/PlayerRow.jsx';
 
@@ -48,14 +47,6 @@ export default function SellTask({ state, dispatch }) {
 
   function handleSell(player, tags) {
     dispatch({ type: 'SELL_PLAYER', payload: { playerId: player.id } });
-    const windfall = rollWindfall(state);
-    if (windfall) {
-      // Shown via the persistent top-level windfall banner (App.jsx), not
-      // the local ticker — a screen-local ticker line gets overwritten by
-      // the very next action and is too easy to miss entirely.
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
-      return;
-    }
     if (tags.includes('key_asset')) setTicker(pick(TICKER_REACTIONS.sell_key_asset));
     else if (tags.includes('surplus')) setTicker(pick(TICKER_REACTIONS.sell_surplus));
   }
@@ -66,14 +57,6 @@ export default function SellTask({ state, dispatch }) {
       if (remaining <= SQUAD_FLOOR) break;
       dispatch({ type: 'SELL_PLAYER', payload: { playerId: id } });
       remaining -= 1;
-    }
-    const windfall = surplusIds.length > 0 ? rollWindfall(state) : null;
-    if (windfall) {
-      // Shown via the persistent top-level windfall banner (App.jsx), not
-      // the local ticker — a screen-local ticker line gets overwritten by
-      // the very next action and is too easy to miss entirely.
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
-      return;
     }
     if (surplusIds.length > 0) setTicker(pick(TICKER_REACTIONS.sell_surplus));
   }
