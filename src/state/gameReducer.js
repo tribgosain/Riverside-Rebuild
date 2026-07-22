@@ -32,6 +32,7 @@ export const EMPTY_STATE = {
   playoffXi: [],
   playoff: null,
   windfallFired: false,
+  windfallMessage: null,
 };
 
 // Builds a fresh window from a Setup payload.
@@ -74,6 +75,7 @@ function mkFreshGame(payload) {
     playoffXi: [],
     playoff: null,
     windfallFired: false,
+    windfallMessage: null,
   };
 }
 
@@ -123,7 +125,19 @@ export function gameReducer(state, action) {
         ...state,
         budget: round2(state.budget + action.payload.amount),
         windfallFired: true,
+        // Round31 follow-up: a per-screen ticker line was getting silently
+        // overwritten by the very next sell/sign action's routine reaction
+        // text — real players clicking through a window in quick succession
+        // could genuinely never see this fire, even though it worked and
+        // credited the budget correctly. Lives on top-level state instead
+        // of screen-local ticker state so it survives navigation and stays
+        // up until explicitly dismissed (see DISMISS_WINDFALL below).
+        windfallMessage: action.payload.message,
       };
+    }
+
+    case 'DISMISS_WINDFALL': {
+      return { ...state, windfallMessage: null };
     }
 
     case 'MARK_TASK_DONE': {

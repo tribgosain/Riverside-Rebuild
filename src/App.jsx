@@ -3,6 +3,7 @@ import { gameReducer, EMPTY_STATE } from './state/gameReducer.js';
 import { saveGame, loadGame } from './state/persistence.js';
 import { decodeShareState } from './state/shareLink.js';
 import Header from './components/Header.jsx';
+import WindfallBanner from './components/WindfallBanner.jsx';
 import Setup from './components/Setup.jsx';
 import TaskHub from './components/TaskHub.jsx';
 import SellTask from './components/tasks/SellTask.jsx';
@@ -54,6 +55,10 @@ export default function App() {
   return (
     <>
       <Header onRestart={showRestart ? handleRestart : null} />
+      <WindfallBanner
+        message={state.windfallMessage}
+        onDismiss={() => dispatch({ type: 'DISMISS_WINDFALL' })}
+      />
       {screen}
     </>
   );

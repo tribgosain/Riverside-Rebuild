@@ -71,8 +71,10 @@ export default function SignTask({ state, dispatch }) {
     dispatch({ type: 'SIGN_PLAYER', payload: { playerId: player.id } });
     const windfall = rollWindfall(state);
     if (windfall) {
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount } });
-      setTicker(windfall.message);
+      // Shown via the persistent top-level windfall banner (App.jsx), not
+      // the local ticker — a screen-local ticker line gets overwritten by
+      // the very next action and is too easy to miss entirely.
+      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
       return;
     }
     if (player.value >= 6) setTicker(pick(TICKER_REACTIONS.sign_headline));
@@ -106,8 +108,10 @@ export default function SignTask({ state, dispatch }) {
     }
     const windfall = filledAny ? rollWindfall(state) : null;
     if (windfall) {
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount } });
-      setTicker(windfall.message);
+      // Shown via the persistent top-level windfall banner (App.jsx), not
+      // the local ticker — a screen-local ticker line gets overwritten by
+      // the very next action and is too easy to miss entirely.
+      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
       return;
     }
     setTicker(filledAny ? pick(TICKER_REACTIONS.sign_headline) : pick(TICKER_REACTIONS.budget_wall));

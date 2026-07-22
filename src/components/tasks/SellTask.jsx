@@ -50,8 +50,10 @@ export default function SellTask({ state, dispatch }) {
     dispatch({ type: 'SELL_PLAYER', payload: { playerId: player.id } });
     const windfall = rollWindfall(state);
     if (windfall) {
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount } });
-      setTicker(windfall.message);
+      // Shown via the persistent top-level windfall banner (App.jsx), not
+      // the local ticker — a screen-local ticker line gets overwritten by
+      // the very next action and is too easy to miss entirely.
+      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
       return;
     }
     if (tags.includes('key_asset')) setTicker(pick(TICKER_REACTIONS.sell_key_asset));
@@ -67,8 +69,10 @@ export default function SellTask({ state, dispatch }) {
     }
     const windfall = surplusIds.length > 0 ? rollWindfall(state) : null;
     if (windfall) {
-      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount } });
-      setTicker(windfall.message);
+      // Shown via the persistent top-level windfall banner (App.jsx), not
+      // the local ticker — a screen-local ticker line gets overwritten by
+      // the very next action and is too easy to miss entirely.
+      dispatch({ type: 'WINDFALL_EVENT', payload: { amount: windfall.amount, message: windfall.message } });
       return;
     }
     if (surplusIds.length > 0) setTicker(pick(TICKER_REACTIONS.sell_surplus));
