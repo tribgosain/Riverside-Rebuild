@@ -88,12 +88,21 @@ export function xiStrength(xi, squadSize) {
   return xiStrengthDetailed(xi, squadSize).strength;
 }
 
+// A genuinely versatile player (e.g. a CDM who's also played real minutes
+// at CM) lists that on their data entry via `secondaryRoles` — treated as a
+// full, natural fit for those slots too, not a lesser fallback. Keeps this
+// to real, deliberate versatility rather than the blanket "any player, any
+// slot" flexibility the broad-position fallback pass below already covers.
+function fillsRole(player, role) {
+  return player.role === role || player.secondaryRoles?.includes(role);
+}
+
 // Greedy best-XI-by-formation: for each pitch slot, prefer the
-// highest-OVR unassigned player whose specific role matches the slot,
-// falling back to anyone in the slot's broad position if no exact-role
-// player remains (a squad rarely has a natural fit for every labelled
-// slot). Returns a { [layoutIndex]: playerId } map, same shape XITask
-// keeps as its own slot-assignment state.
+// highest-OVR unassigned player whose specific (or listed secondary) role
+// matches the slot, falling back to anyone in the slot's broad position if
+// no such player remains (a squad rarely has a natural fit for every
+// labelled slot). Returns a { [layoutIndex]: playerId } map, same shape
+// XITask keeps as its own slot-assignment state.
 export function bestXI(squad, formation) {
   const layout = PITCH_LAYOUT[formation];
   if (!layout) throw new Error(`Unknown formation: ${formation}`);
@@ -101,12 +110,12 @@ export function bestXI(squad, formation) {
   const used = new Set();
   const slotMap = {};
 
-  // Fill exact role matches first across all slots, then fall back to
-  // broad-position matches, so specific roles don't get stolen by a
-  // same-position slot processed earlier.
+  // Fill exact (or secondary-role) matches first across all slots, then
+  // fall back to broad-position matches, so specific roles don't get
+  // stolen by a same-position slot processed earlier.
   layout.forEach((slot, i) => {
     const exact = squad
-      .filter((p) => p.role === slot.role && !used.has(p.id))
+      .filter((p) => fillsRole(p, slot.role) && !used.has(p.id))
       .sort((a, b) => b.ovr - a.ovr)[0];
     if (exact) {
       slotMap[i] = exact.id;
