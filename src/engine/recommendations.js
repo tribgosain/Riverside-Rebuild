@@ -16,9 +16,9 @@ const YOUNG_FLOOR_AGE = 21;
 
 // How far below the role's strongest *eligible* player someone can sit and
 // still count as genuinely first-team-quality — lets a proven, established
-// second option (Riley McGree alongside Aidan Morris) share key-asset
-// status with the outright best, rather than only ever crowning one player
-// per role regardless of how close the gap actually is.
+// second option share key-asset status with the outright best, rather than
+// only ever crowning one player per role regardless of how close the gap
+// actually is.
 const KEY_ASSET_OVR_MARGIN = 5;
 
 // Scouting-blurb language that self-contradicts "central to the club's
