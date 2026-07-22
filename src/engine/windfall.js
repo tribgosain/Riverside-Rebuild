@@ -44,50 +44,37 @@
 // rather than a rare bonus — raised again so Rogers specifically lands in
 // ~50% of individual windows (see scripts/round31-rogers-check.mjs for the
 // math/verification approach).
-const PER_ACTION_CHANCE = 0.062; // ~50% cumulative across a typical window's sell/sign actions
+//
+// Round31 follow-up #2: removed the generic "academy sell-on clause"
+// filler event entirely, per explicit request — this is a Morgan Rogers
+// moment specifically, not a slot machine that occasionally pays out
+// under a different, made-up pretext. Only one event now, so the
+// weighted-pick machinery that used to choose between events is gone too.
+// Every fire is now Rogers (previously only ~80% of fires were, split
+// with the removed event), so 0.062 would have pushed the per-window rate
+// up to ~63% — lowered to 0.045 to hold the ~50% target from the prior
+// follow-up (re-verified below).
+const PER_ACTION_CHANCE = 0.045; // ~50% cumulative across a typical window's sell/sign actions
 
-export const WINDFALL_EVENTS = [
-  {
-    id: 'morgan_rogers',
-    weight: 4,
-    minFee: 90,
-    maxFee: 117,
-    // The £15m Villa paid Boro for Rogers in Jan 2024 — the cut applies to
-    // profit above this, not the full resale fee (see file header).
-    originalFee: 15,
-    cutPercent: 20,
-    // A fee this size is paid in installments over several seasons in
-    // reality, not as one lump sum on completion — award only the first
-    // tranche, not the full sell-on cut. Randomised within this range
-    // (not a fixed fraction) so the installment itself varies a bit
-    // run to run — lands roughly £1.65-3.9m across the fee range, a
-    // genuinely meaningful but not game-swinging top-up.
-    installmentFractionRange: [0.11, 0.19],
-    clubs: ['Chelsea'],
-    buildMessage: (fee, fullCut, awarded, club, profit) =>
-      `BREAKING — ${club} agree £${fee}m for Morgan Rogers — Villa's profit on the £15m they paid Boro: £${profit}m. Boro's 20% cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
-  },
-  {
-    id: 'academy_clause',
-    weight: 1,
-    minFee: 18,
-    maxFee: 35,
-    cutPercent: 15,
-    clubs: ['a Premier League club', 'a side in Serie A'],
-    buildMessage: (fee, fullCut, awarded, club) =>
-      `Small windfall — an old academy sell-on clause just paid out. £${fee}m fee to ${club}, Boro's cut: £${awarded}m.`,
-  },
-];
-
-function pickWeighted(events) {
-  const total = events.reduce((s, e) => s + e.weight, 0);
-  let r = Math.random() * total;
-  for (const e of events) {
-    r -= e.weight;
-    if (r <= 0) return e;
-  }
-  return events[events.length - 1];
-}
+export const WINDFALL_EVENT = {
+  id: 'morgan_rogers',
+  minFee: 90,
+  maxFee: 117,
+  // The £15m Villa paid Boro for Rogers in Jan 2024 — the cut applies to
+  // profit above this, not the full resale fee (see file header).
+  originalFee: 15,
+  cutPercent: 20,
+  // A fee this size is paid in installments over several seasons in
+  // reality, not as one lump sum on completion — award only the first
+  // tranche, not the full sell-on cut. Randomised within this range
+  // (not a fixed fraction) so the installment itself varies a bit
+  // run to run — lands roughly £1.65-3.9m across the fee range, a
+  // genuinely meaningful but not game-swinging top-up.
+  installmentFractionRange: [0.11, 0.19],
+  clubs: ['Chelsea'],
+  buildMessage: (fee, fullCut, awarded, club, profit) =>
+    `BREAKING — ${club} agree £${fee}m for Morgan Rogers — Villa's profit on the £15m they paid Boro: £${profit}m. Boro's 20% cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
+};
 
 function randomInt(min, max) {
   return Math.floor(min + Math.random() * (max - min + 1));
@@ -99,13 +86,9 @@ export function rollWindfall(state) {
   if (state.windfallFired) return null;
   if (Math.random() > PER_ACTION_CHANCE) return null;
 
-  const event = pickWeighted(WINDFALL_EVENTS);
+  const event = WINDFALL_EVENT;
   const fee = randomInt(event.minFee, event.maxFee);
-  // Sell-on clauses apply to profit above whatever was originally paid, not
-  // the full fee — originalFee is 0 for events with no prior sale to net
-  // against (e.g. academy_clause), so this collapses to the old flat-fee
-  // behaviour for those.
-  const profit = fee - (event.originalFee || 0);
+  const profit = fee - event.originalFee;
   const fullCut = Math.round(profit * (event.cutPercent / 100) * 10) / 10;
   let awarded = fullCut;
   if (event.installmentFractionRange) {
