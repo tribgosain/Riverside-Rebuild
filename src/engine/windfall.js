@@ -27,11 +27,14 @@
 // sequences, matching round30's math. So players reporting zero sightings
 // across several playthroughs were NOT hitting a bug — 0.02 was just
 // genuinely too low for a player to expect to see it within a handful of
-// tries. Raised to 0.035, which the same loop test shows lands Rogers in
-// ~35% of individual windows and >95% of 10-try sequences (see script
-// output) — low enough on any single window to still read as a rare
-// event, high enough that a real player will actually encounter it.
-const PER_ACTION_CHANCE = 0.035; // ~30-40% cumulative across a typical window's sell/sign actions
+// tries. Raised to 0.035 (~35% per window), then confirmed working with a
+// real unforced fire on the live production site.
+//
+// Round31 follow-up: explicit request to make it a coin-flip per playthrough
+// rather than a rare bonus — raised again so Rogers specifically lands in
+// ~50% of individual windows (see scripts/round31-rogers-check.mjs for the
+// math/verification approach).
+const PER_ACTION_CHANCE = 0.062; // ~50% cumulative across a typical window's sell/sign actions
 
 export const WINDFALL_EVENTS = [
   {
