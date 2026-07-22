@@ -5,10 +5,20 @@
 // Morgan Rogers is real, current fact — not a flavour invention: Boro hold
 // a genuine 20% sell-on clause from his January 2024 sale to Aston Villa
 // (£15m fee). Villa are fielding real interest, and reporting has since
-// firmed up specifically on Chelsea (valuations reported £90-130m) — if
-// that sale happens, Boro's cut lands roughly £18-26m. Deliberately NOT
-// Hackney: he only just left for Everton this summer, so a same-window
+// firmed up specifically on Chelsea (valuations reported £90-117m). Deliberately
+// NOT Hackney: he only just left for Everton this summer, so a same-window
 // resale isn't realistic even as a game event.
+//
+// Sell-on clauses are conventionally a cut of PROFIT, not the full resale
+// fee — Boro's 20% applies to what Villa actually made on the deal (resale
+// fee minus the £15m they paid Boro), not 20% of the headline fee. That's
+// also the correct model for the earlier, separate transaction where Man
+// City (who developed Rogers) held their own clause on Boro's original
+// profit from selling him to Villa — but that clause was already settled
+// back in Jan 2024 and has no bearing on what Boro receive from Villa's
+// resale now, so it isn't modelled here. At fee £90-117m: profit £75-102m,
+// Boro's 20% cut £15-20.4m, first installment (11-19% of that) ~£1.65-3.9m
+// — lands around £3m at the upper end of the range.
 
 // Round30: verified the trigger logic was genuinely wired correctly
 // (rollWindfall() is called from both Sell and Sign, on every sell/trim/
@@ -41,18 +51,21 @@ export const WINDFALL_EVENTS = [
     id: 'morgan_rogers',
     weight: 4,
     minFee: 90,
-    maxFee: 130,
+    maxFee: 117,
+    // The £15m Villa paid Boro for Rogers in Jan 2024 — the cut applies to
+    // profit above this, not the full resale fee (see file header).
+    originalFee: 15,
     cutPercent: 20,
     // A fee this size is paid in installments over several seasons in
     // reality, not as one lump sum on completion — award only the first
     // tranche, not the full sell-on cut. Randomised within this range
     // (not a fixed fraction) so the installment itself varies a bit
-    // run to run — lands roughly £2-5m across the fee range, a genuinely
-    // meaningful but not game-swinging top-up.
+    // run to run — lands roughly £1.65-3.9m across the fee range, a
+    // genuinely meaningful but not game-swinging top-up.
     installmentFractionRange: [0.11, 0.19],
     clubs: ['Chelsea'],
-    buildMessage: (fee, fullCut, awarded, club) =>
-      `BREAKING — ${club} agree £${fee}m for Morgan Rogers. Boro's 20% sell-on cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
+    buildMessage: (fee, fullCut, awarded, club, profit) =>
+      `BREAKING — ${club} agree £${fee}m for Morgan Rogers — Villa's profit on the £15m they paid Boro: £${profit}m. Boro's 20% cut: £${fullCut}m, paid in installments — the first lands now: £${awarded}m into the budget.`,
   },
   {
     id: 'academy_clause',
@@ -88,7 +101,12 @@ export function rollWindfall(state) {
 
   const event = pickWeighted(WINDFALL_EVENTS);
   const fee = randomInt(event.minFee, event.maxFee);
-  const fullCut = Math.round(fee * (event.cutPercent / 100) * 10) / 10;
+  // Sell-on clauses apply to profit above whatever was originally paid, not
+  // the full fee — originalFee is 0 for events with no prior sale to net
+  // against (e.g. academy_clause), so this collapses to the old flat-fee
+  // behaviour for those.
+  const profit = fee - (event.originalFee || 0);
+  const fullCut = Math.round(profit * (event.cutPercent / 100) * 10) / 10;
   let awarded = fullCut;
   if (event.installmentFractionRange) {
     const [min, max] = event.installmentFractionRange;
@@ -97,5 +115,5 @@ export function rollWindfall(state) {
   }
   const club = event.clubs[Math.floor(Math.random() * event.clubs.length)];
 
-  return { message: event.buildMessage(fee, fullCut, awarded, club), amount: awarded };
+  return { message: event.buildMessage(fee, fullCut, awarded, club, profit), amount: awarded };
 }
