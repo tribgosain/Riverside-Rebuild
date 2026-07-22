@@ -9,9 +9,9 @@
 // Morgan Rogers is real, current fact — not a flavour invention: Boro hold
 // a genuine 20% sell-on clause from his January 2024 sale to Aston Villa
 // (£15m fee). Villa are fielding real interest, and reporting has since
-// firmed up specifically on Chelsea (valuations reported £90-117m).
-// Deliberately NOT Hackney: he only just left for Everton this summer, so
-// a same-window resale isn't realistic even as a game event.
+// firmed up specifically on Chelsea at £117m. Deliberately NOT Hackney: he
+// only just left for Everton this summer, so a same-window resale isn't
+// realistic even as a game event.
 //
 // Sell-on clauses are conventionally a cut of PROFIT, not the full resale
 // fee — Boro's 20% applies to what Villa actually made on the deal (resale
@@ -20,8 +20,9 @@
 // City (who developed Rogers) held their own clause on Boro's original
 // profit from selling him to Villa — but that clause was already settled
 // back in Jan 2024 and has no bearing on what Boro receive from Villa's
-// resale now, so it isn't modelled here. At fee £90-117m: profit £75-102m,
-// Boro's 20% cut £15-20.4m, first installment (11-19% of that) ~£1.65-3.9m.
+// resale now, so it isn't modelled here. Fee fixed at £117m per explicit
+// request (was randomised £90-117m): profit £102m, Boro's 20% cut £20.4m,
+// first installment (11-19% of that) ~£2.2-3.9m still varies run to run.
 //
 // Round31: verified the trigger logic was genuinely wired correctly, then
 // re-verified with real loop tests (scripts/round31-rogers-check.mjs) after
@@ -34,8 +35,7 @@ const WINDOW_CHANCE = 0.5;
 
 export const WINDFALL_EVENT = {
   id: 'morgan_rogers',
-  minFee: 90,
-  maxFee: 117,
+  fee: 117,
   // The £15m Villa paid Boro for Rogers in Jan 2024 — the cut applies to
   // profit above this, not the full resale fee (see file header).
   originalFee: 15,
@@ -51,10 +51,6 @@ export const WINDFALL_EVENT = {
     `${club} agree £${fee}m fee for Morgan Rogers. Boro's 20% cut: £${fullCut}m — £${awarded}m lands in the budget now.`,
 };
 
-function randomInt(min, max) {
-  return Math.floor(min + Math.random() * (max - min + 1));
-}
-
 // Call once when a fresh window opens (see gameReducer's mkFreshGame).
 // Returns null most of the time; returns { message, amount } on the roll
 // that hits.
@@ -62,7 +58,7 @@ export function rollWindfall() {
   if (Math.random() > WINDOW_CHANCE) return null;
 
   const event = WINDFALL_EVENT;
-  const fee = randomInt(event.minFee, event.maxFee);
+  const fee = event.fee;
   const profit = fee - event.originalFee;
   const fullCut = Math.round(profit * (event.cutPercent / 100) * 10) / 10;
   const [min, max] = event.installmentFractionRange;
