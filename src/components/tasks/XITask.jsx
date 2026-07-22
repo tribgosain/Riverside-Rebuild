@@ -83,12 +83,16 @@ export default function XITask({
   const overflow = xiPlayers.filter((p) => !slottedIds.has(p.id));
 
   const activeSlot = activeSlotIndex !== null ? renderSlots[activeSlotIndex] : null;
-  // Any squad player can fill any slot — no pos/role restriction. Natural
-  // fits (matching role, then matching broad pos) sort to the top purely
-  // as a convenience, not a limit on who's selectable.
+  // Outfield slots: any squad player can fill any slot — no pos/role
+  // restriction (round30 fix, see taskGate.js). Natural fits (matching
+  // role, then matching broad pos) sort to the top purely as a
+  // convenience, not a limit on who's selectable. Goalkeeper is the one
+  // genuine exception — it's a distinct discipline, not a flexible outfield
+  // slot, so the GK pitch slot is restricted to actual goalkeepers only.
   const pickerOptions = activeSlot
     ? squad
         .filter((p) => !xi.includes(p.id))
+        .filter((p) => (activeSlot.pos === 'GK' ? p.pos === 'GK' : true))
         .sort((a, b) => {
           const aFit = a.role === activeSlot.role ? 2 : a.pos === activeSlot.pos ? 1 : 0;
           const bFit = b.role === activeSlot.role ? 2 : b.pos === activeSlot.pos ? 1 : 0;
