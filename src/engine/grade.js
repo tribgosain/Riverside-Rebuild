@@ -10,11 +10,19 @@ export function gradeForPosition(position) {
 }
 
 // season: { position, playoff: null | { result: 'promoted' | 'lost_final' | 'lost_semi' } }
+// Round32: A+ is reserved for actually winning the league (position 1,
+// via gradeForPosition below) — going up through the playoff is a real
+// achievement but not the top mark. Losing in the playoff (final or
+// semi) still means reaching it, which stays a genuinely good outcome —
+// grade B, not lumped in with missing it entirely.
 export function gradeForSeason(season) {
   const { position, playoff } = season;
 
   if (playoff?.result === 'promoted') {
-    return { grade: 'A+' };
+    return { grade: 'A' };
+  }
+  if (playoff?.result === 'lost_final' || playoff?.result === 'lost_semi') {
+    return { grade: 'B' };
   }
 
   const grade = gradeForPosition(position);

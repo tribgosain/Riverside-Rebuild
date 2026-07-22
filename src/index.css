@@ -1687,21 +1687,16 @@ a:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-/* 4. Recap/explanation text — last in the hierarchy but still legible,
-   not an afterthought caption (was 12px at 0.85 opacity before). */
-.wrapped-card__grade-note {
+/* 4. Diagnostic text — last in the hierarchy but still legible, not an
+   afterthought caption. Round32: this is now the card's only prose
+   block (the separate grade-note sentence was cut as redundant with the
+   huge grade/position already shown above it), so it carries full
+   opacity rather than sitting a notch below a first paragraph. */
+.wrapped-card__diagnostic {
   font-size: 13.5px;
   line-height: 1.4;
   opacity: 0.92;
   margin: 0;
-  max-width: 96%;
-}
-
-.wrapped-card__diagnostic {
-  font-size: 13.5px;
-  line-height: 1.4;
-  opacity: 0.8;
-  margin: 6px 0 0;
   max-width: 96%;
 }
 

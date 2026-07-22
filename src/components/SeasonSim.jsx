@@ -43,6 +43,11 @@ function computeSeason(state) {
   const boroMatchesChronological = matches.filter((m) => m.homeId === BORO_ID || m.awayId === BORO_ID);
   const streaks = computeStreaks(boroMatchesChronological, BORO_ID);
 
+  // For the results recap's squad-profile insight (engine/recap.js) — a
+  // young, unproven XI has a genuine story to tell alongside the raw
+  // goals data, not just a number to cite.
+  const xiAvgAge = xiPlayers.length ? xiPlayers.reduce((sum, p) => sum + p.age, 0) / xiPlayers.length : null;
+
   return {
     matches,
     standings,
@@ -55,6 +60,7 @@ function computeSeason(state) {
     playoffEligible,
     streaks,
     wildcardOutcomes,
+    xiAvgAge,
     boroMatches: shuffled(boroMatchesChronological),
   };
 }

@@ -324,16 +324,18 @@ export const PHILOSOPHIES = [
 // the same; the mandate only ever changed the difficulty of getting
 // there, never what "good enough" means.
 //
-// Cutoffs checked against round29's real 25-run balance test post-fix:
-// optimal play averaged 5.52nd (range 3rd-9th, 80% playoff rate),
-// good-faith realistic play averaged 6.64th (range 3rd-11th, 36% playoff
-// rate). Under these bands that puts realistic play mostly in A/C
-// territory with real spread between them — matches the intent that
-// missing the playoffs is a genuinely mixed, uncertain outcome even for
-// a well-built squad, not an automatic fail or an automatic pass.
+// Round32: tightened the top per explicit request — A+ is winning the
+// league outright, not just "promoted." 1st and 2nd get automatic
+// promotion in this league structure (only 3rd-6th enter the playoff —
+// see SeasonSim's playoffEligible check), so this table only ever grades
+// position 1 and 2 directly; positions 3-6 are always graded via
+// gradeForSeason with the actual playoff result instead (see below) —
+// A for going up via the playoff, B for reaching it and losing. The
+// max:6 entry below exists only as a sane fallback, never actually shown.
 export const GRADE_BANDS = [
-  { max: 2, grade: 'A+' },
-  { max: 6, grade: 'A' },
+  { max: 1, grade: 'A+' },
+  { max: 2, grade: 'A' },
+  { max: 6, grade: 'B' },
   { max: 10, grade: 'C' },
   { max: 16, grade: 'D' },
   { max: 24, grade: 'F' },

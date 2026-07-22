@@ -21,32 +21,6 @@ const SUPPORTS_SHARE_FILES = (() => {
     return false;
   }
 })();
-// A plain, transparent readout of the actual grading logic — not flavour
-// text. Round30: one uniform standard regardless of mandate — this club
-// reached a real playoff final last season, so playoffs is the floor no
-// matter how constrained the budget was. Wording reflects that
-// philosophy directly: A+ is the actual goal (promotion), A is the
-// minimum acceptable outcome (playoffs), anything below that is a real
-// miss, graded on how far below.
-const GRADE_EXPLANATION = {
-  'A+': 'promotion — the actual goal, delivered',
-  A: 'playoffs reached — the floor, minimum acceptable',
-  C: 'missed the playoffs — below the minimum expectation',
-  D: 'well below what the season needed to deliver',
-  F: 'relegation-level underperformance',
-};
-
-// Round30: rewritten to be a self-contained recap sentence — the card's
-// mandate line and headline (grade+position) already show that context
-// elsewhere on the redesigned card, so this doesn't need to repeat them,
-// just state the qualitative read plainly for whoever's looking at the
-// card with none of that context pre-loaded (e.g. a stranger on X).
-function gradeExplanation({ promoted, position, grade }) {
-  if (promoted) return "Promoted via the playoffs — the board can't ask for more than that.";
-  const posText = `${position}${ordinalSuffix(position)}`;
-  return `Finished ${posText} — ${GRADE_EXPLANATION[grade] || 'graded against a uniform playoffs-as-floor standard.'}`;
-}
-
 export default function ResultsModal({ state, dispatch }) {
   const [shareStatus, setShareStatus] = useState('');
   const cardRef = useRef(null);
@@ -81,11 +55,6 @@ export default function ResultsModal({ state, dispatch }) {
     outcomeStatement = null;
   }
 
-  const gradeNote = gradeExplanation({
-    promoted,
-    position: season.boroPosition,
-    grade: season.grade,
-  });
   const diagnostic = buildDiagnostic(season);
 
   // Computed from the actual page, not hardcoded — so this never goes
@@ -189,10 +158,13 @@ export default function ResultsModal({ state, dispatch }) {
         {/* Round30 redesign — content hierarchy for a stranger seeing only
             this image with no app context, in this exact order:
             1. brand, 2. grade+position (the headline), 3. stats,
-            4. recap text. A mini league table was deliberately left out —
-            at social-share thumbnail sizes a table would either be
-            illegible or would force everything above it smaller, which
-            trades away the hierarchy this was redesigned around. */}
+            4. diagnostic (round32: a single causal-insight paragraph, not
+            a restated grade-note + a stat-comparison diagnostic stacked
+            together — that read as cluttered). A mini league table was
+            deliberately left out — at social-share thumbnail sizes a
+            table would either be illegible or would force everything
+            above it smaller, which trades away the hierarchy this was
+            redesigned around. */}
         <div className="wrapped-card__content">
           <div className="wrapped-card__top-block">
             <div className="wrapped-card__brand">
@@ -229,7 +201,6 @@ export default function ResultsModal({ state, dispatch }) {
                 <span>Net {net >= 0 ? '+' : ''}£{net.toFixed(2)}m</span>
               </div>
 
-              <p className="wrapped-card__grade-note">{gradeNote}</p>
               <p className="wrapped-card__diagnostic">{diagnostic}</p>
             </div>
 
