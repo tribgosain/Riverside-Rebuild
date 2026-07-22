@@ -9,19 +9,51 @@ function shortName(name) {
   return parts.length > 1 ? parts[parts.length - 1] : name;
 }
 
-// Assigns xi players to layout slots by position, in xi array order — used
-// only to seed/reseed slotMap (on mount and whenever formation changes).
-// Once seeded, individual slot edits go straight into slotMap by index so a
-// tap on a SPECIFIC slot always binds to that slot, not "next available".
+// A genuinely versatile player (secondaryRoles on their data entry) is a
+// full natural fit for those roles too — mirrors engine/strength.js's
+// bestXI(), kept as a separate module-level copy since that one filters a
+// whole squad down to 11 while this one re-slots an already-fixed 11.
+function fitsRole(player, role) {
+  return player.role === role || player.secondaryRoles?.includes(role);
+}
+
+// Assigns xi players to layout slots — used only to seed/reseed slotMap (on
+// mount and whenever formation changes). Two-pass, mirroring bestXI():
+// exact/secondary-role match first across all slots, then broad-position
+// fallback for whatever's left. Deliberately NOT the old "bucket by each
+// player's own broad pos, in xi array order" approach — that scrambled who
+// played where among same-broad-position players (array order has nothing
+// to do with slot assignment) and, worse, could flat-out lose a player
+// into false "overflow" whenever the xi contained a deliberately
+// off-position flexible pick (e.g. a winger fielded at right-back, exactly
+// what round30 added support for) — the very case a reload/re-derive (like
+// arriving at the playoff XI screen with the season XI carried over) hits
+// most often. Since xiPlayers is a fixed, already-legal set of 11, this
+// two-pass match reliably reconstructs a complete mapping rather than
+// leaving phantom gaps. Once seeded, individual slot edits go straight
+// into slotMap by index so a tap on a SPECIFIC slot always binds to that
+// slot, not "next available".
 function deriveSlotMap(layout, xiPlayers) {
-  const byPos = { GK: [], DF: [], MF: [], FW: [] };
-  xiPlayers.forEach((p) => byPos[p.pos]?.push(p));
-  const cursor = { GK: 0, DF: 0, MF: 0, FW: 0 };
+  const used = new Set();
   const map = {};
+
   layout.forEach((slot, i) => {
-    const player = byPos[slot.pos][cursor[slot.pos]++];
-    if (player) map[i] = player.id;
+    const exact = xiPlayers.find((p) => fitsRole(p, slot.role) && !used.has(p.id));
+    if (exact) {
+      map[i] = exact.id;
+      used.add(exact.id);
+    }
   });
+
+  layout.forEach((slot, i) => {
+    if (map[i]) return;
+    const fallback = xiPlayers.find((p) => p.pos === slot.pos && !used.has(p.id));
+    if (fallback) {
+      map[i] = fallback.id;
+      used.add(fallback.id);
+    }
+  });
+
   return map;
 }
 
@@ -83,11 +115,8 @@ export default function XITask({
   const overflow = xiPlayers.filter((p) => !slottedIds.has(p.id));
 
   const activeSlot = activeSlotIndex !== null ? renderSlots[activeSlotIndex] : null;
-  // A genuinely versatile player (secondaryRoles on their data entry, e.g.
-  // a CDM who's also played real minutes at CM) is a full natural fit for
-  // those slots too, same tier as their primary role — not a lesser
-  // fallback, and not penalised for it.
-  const fitsRole = (p, role) => p.role === role || p.secondaryRoles?.includes(role);
+  // fitsRole (module-level, above): a genuinely versatile player is a full
+  // natural fit for their secondary role(s) too, not a lesser fallback.
   // Outfield slots: any squad player can fill any slot — no pos/role
   // restriction (round30 fix, see taskGate.js). Natural fits (matching
   // role or secondary role, then matching broad pos) sort to the top
