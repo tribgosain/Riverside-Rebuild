@@ -40,9 +40,9 @@ export function formationRequirements(formation) {
 const WILDCARD_VARIANCE = 12;
 
 function effectiveOvr(player) {
-  if (!player.wildcard) return player.ovr;
+  if (!player.wildcard) return { value: player.ovr, swing: 0 };
   const swing = (Math.random() * 2 - 1) * WILDCARD_VARIANCE;
-  return Math.max(30, player.ovr + swing);
+  return { value: Math.max(30, player.ovr + swing), swing };
 }
 
 // xi: array of player objects (length 11, any order). Returns a 0-100ish
@@ -57,12 +57,35 @@ function effectiveOvr(player) {
 // accordingly so a genuinely maxed-out, fully-invested squad (near
 // SQUAD_CEILING) can meaningfully outweigh a squad that just fields a decent
 // XI and stops there — verified against real simulation runs (round17).
-export function xiStrength(xi, squadSize) {
-  if (!xi || xi.length === 0) return 0;
-  const avgOvr = xi.reduce((sum, p) => sum + effectiveOvr(p), 0) / xi.length;
+// Round31: split out from xiStrength so the results recap can report which
+// wildcard signings boomed or busted using the *actual* roll that decided
+// this season's simulation, rather than sampling a fresh independent swing
+// that wouldn't match what really happened in the sim.
+export function xiStrengthDetailed(xi, squadSize) {
+  if (!xi || xi.length === 0) return { strength: 0, wildcards: [] };
+  const wildcards = [];
+  let sum = 0;
+  for (const p of xi) {
+    const { value, swing } = effectiveOvr(p);
+    sum += value;
+    if (p.wildcard) {
+      wildcards.push({
+        id: p.id,
+        name: p.name,
+        baseOvr: p.ovr,
+        effectiveOvr: Math.round(value * 10) / 10,
+        swing: Math.round(swing * 10) / 10,
+      });
+    }
+  }
+  const avgOvr = sum / xi.length;
   const depthBeyondFloor = Math.max(0, squadSize - SQUAD_FLOOR);
   const depthBonus = Math.min(12, depthBeyondFloor * 0.5);
-  return avgOvr + depthBonus;
+  return { strength: avgOvr + depthBonus, wildcards };
+}
+
+export function xiStrength(xi, squadSize) {
+  return xiStrengthDetailed(xi, squadSize).strength;
 }
 
 // Greedy best-XI-by-formation: for each pitch slot, prefer the

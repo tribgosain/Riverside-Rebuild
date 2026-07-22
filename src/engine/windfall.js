@@ -18,11 +18,20 @@
 // anyway: at a realistic ~15 actions per window, Morgan Rogers
 // specifically only fired ~11% of the time, meaning fewer than half of
 // players trying 5 separate playthroughs would ever see it. Raised to
-// 0.02 (~20% per playthrough, ~69% chance of seeing Rogers across 5
-// tries, empirically checked the same way) — still feels like a genuine
-// rare event on any single window, no longer "essentially never happens
-// in practice."
-const PER_ACTION_CHANCE = 0.02; // ~15-25% cumulative across a typical window's sell/sign actions
+// 0.02, believed at the time to give ~20% per playthrough.
+//
+// Round31: re-verified with an actual 1,000-window loop test
+// (scripts/round31-rogers-check.mjs) rather than trusting the round30
+// comment. The wiring/trigger logic itself is confirmed correct — 0.02
+// empirically produced Rogers in ~23% of windows and ~69% of 5-try
+// sequences, matching round30's math. So players reporting zero sightings
+// across several playthroughs were NOT hitting a bug — 0.02 was just
+// genuinely too low for a player to expect to see it within a handful of
+// tries. Raised to 0.035, which the same loop test shows lands Rogers in
+// ~35% of individual windows and >95% of 10-try sequences (see script
+// output) — low enough on any single window to still read as a rare
+// event, high enough that a real player will actually encounter it.
+const PER_ACTION_CHANCE = 0.035; // ~30-40% cumulative across a typical window's sell/sign actions
 
 export const WINDFALL_EVENTS = [
   {

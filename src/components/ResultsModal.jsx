@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { toBlob } from 'html-to-image';
 import { MANDATES, SPONSORS } from '../data/copy.js';
+import { buildDiagnostic } from '../engine/recap.js';
 import SponsorBadge from './visuals/SponsorBadge.jsx';
 import KitShirt from './visuals/KitShirt.jsx';
 
@@ -85,6 +86,7 @@ export default function ResultsModal({ state, dispatch }) {
     position: season.boroPosition,
     grade: season.grade,
   });
+  const diagnostic = buildDiagnostic(season);
 
   // Computed from the actual page, not hardcoded — so this never goes
   // stale again the way the old hardcoded "riverside-rebuild.pages.dev"
@@ -228,6 +230,7 @@ export default function ResultsModal({ state, dispatch }) {
               </div>
 
               <p className="wrapped-card__grade-note">{gradeNote}</p>
+              <p className="wrapped-card__diagnostic">{diagnostic}</p>
             </div>
 
             <div className="wrapped-card__watermark">{shareDomain}</div>

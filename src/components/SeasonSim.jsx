@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import clubsData from '../data/clubs.json';
 import { PHILOSOPHIES, LOADING_FLAVOR } from '../data/copy.js';
 import ProgressBar from './visuals/ProgressBar.jsx';
-import { xiStrength } from '../engine/strength.js';
+import { xiStrengthDetailed } from '../engine/strength.js';
 import { simulateSeason } from '../engine/simulate.js';
 import { computeStandings, findPosition } from '../engine/table.js';
 import { gradeForPosition } from '../engine/grade.js';
@@ -26,7 +26,7 @@ function shuffled(arr) {
 // outcome, because the outcome already exists.
 function computeSeason(state) {
   const xiPlayers = state.xi.map((id) => state.squad.find((p) => p.id === id)).filter(Boolean);
-  const boroStrength = xiStrength(xiPlayers, state.squad.length);
+  const { strength: boroStrength, wildcards: wildcardOutcomes } = xiStrengthDetailed(xiPlayers, state.squad.length);
   const philosophy = PHILOSOPHIES.find((p) => p.id === state.philosophy) || PHILOSOPHIES[0];
 
   const teams = [...clubsData, { id: BORO_ID, name: 'Middlesbrough', short: 'BOR', strength: boroStrength }];
@@ -37,7 +37,11 @@ function computeSeason(state) {
   const playoffEligible = position >= 3 && position <= 6;
   const grade = gradeForPosition(position);
 
-  const boroMatches = matches.filter((m) => m.homeId === BORO_ID || m.awayId === BORO_ID);
+  // Chronological order (fixture order, not the shuffled reveal order below)
+  // — streaks have to be computed on the real season sequence to mean
+  // anything for the results recap.
+  const boroMatchesChronological = matches.filter((m) => m.homeId === BORO_ID || m.awayId === BORO_ID);
+  const streaks = computeStreaks(boroMatchesChronological, BORO_ID);
 
   return {
     matches,
@@ -49,7 +53,9 @@ function computeSeason(state) {
     boroStrength,
     grade,
     playoffEligible,
-    boroMatches: shuffled(boroMatches),
+    streaks,
+    wildcardOutcomes,
+    boroMatches: shuffled(boroMatchesChronological),
   };
 }
 

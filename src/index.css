@@ -1695,6 +1695,14 @@ a:focus-visible {
   max-width: 96%;
 }
 
+.wrapped-card__diagnostic {
+  font-size: 13.5px;
+  line-height: 1.4;
+  opacity: 0.8;
+  margin: 6px 0 0;
+  max-width: 96%;
+}
+
 .wrapped-card__watermark {
   margin-top: 14px;
   font-family: var(--font-mono);

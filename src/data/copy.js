@@ -2,11 +2,11 @@
 // flavor, sponsor/kit/philosophy banks, grade narrative, nicknames, loading
 // flavor. Keeping it centralized so voice stays consistent as content grows.
 
-export const COLD_OPEN = `Hackney's gone. Fry's gone. You blew a playoff final without registering a single shot on target. Hellberg's spent the second half of last season working with thirteen players he actually trusted, and he wants pace, a plan-B striker, and a squad deep enough to survive a bad month. Sarmiento and Joseph are already through the door. The rest of the window is yours.`;
+export const COLD_OPEN = `Hackney's gone. Fry's gone. You blew a playoff final without registering a single shot on target. Hellberg's spent the second half of last season working with thirteen players he actually trusted, and he wants pace, a plan-B striker, and a squad deep enough to survive a bad month. Sarmiento, Joseph, and Lankshear are already through the door. The rest of the window is yours.`;
 
 // Trimmed for the persistent sidebar — same voice as the cold open, short
 // enough to sit in a narrow column across all three task screens.
-export const THE_BRIEF = `Hackney and Fry are gone. Hellberg trusted thirteen players by the end of last season — pace, a plan-B striker, and squad depth are the brief. Sarmiento and Joseph are already in.`;
+export const THE_BRIEF = `Hackney and Fry are gone. Hellberg trusted thirteen players by the end of last season — pace, a plan-B striker, and squad depth are the brief. Sarmiento, Joseph, and Lankshear are already in.`;
 
 export const ROLE_LINE = 'SPORTING DIRECTOR · MIDDLESBROUGH · 2026-27';
 
