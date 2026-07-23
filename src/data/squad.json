@@ -1,6 +1,6 @@
 [
-  { "id": "p01", "name": "Sol Brynn", "pos": "GK", "role": "GK", "age": 25, "ovr": 75, "value": 2.0, "wage": 26, "localLad": true, "status": "future-uncertain", "blurb": "Contract runs to 2030, but Leeds are watching closely — where his season ends up may depend on where Boro's does." },
-  { "id": "p02", "name": "Seny Dieng", "pos": "GK", "role": "GK", "age": 31, "ovr": 65, "value": 0.9, "wage": 14, "localLad": false, "status": "future-uncertain", "blurb": "Boro's No.2 for two seasons, but a permanent exit is genuinely under consideration this summer — not a settled part of the plans right now." },
+  { "id": "p01", "name": "Sol Brynn", "pos": "GK", "role": "GK", "age": 25, "ovr": 75, "value": 2.0, "wage": 11, "localLad": true, "status": "future-uncertain", "blurb": "Contract runs to 2030, but Leeds are watching closely — where his season ends up may depend on where Boro's does." },
+  { "id": "p02", "name": "Seny Dieng", "pos": "GK", "role": "GK", "age": 31, "ovr": 65, "value": 0.9, "wage": 20, "localLad": false, "status": "future-uncertain", "blurb": "Boro's No.2 for two seasons, but a permanent exit is genuinely under consideration this summer — not a settled part of the plans right now." },
 
   { "id": "p03", "name": "Adilson Malanda", "pos": "DF", "role": "CB", "age": 24, "ovr": 73, "value": 7.0, "wage": 26, "localLad": false },
   { "id": "p04", "name": "Alfie Jones", "pos": "DF", "role": "CB", "age": 28, "ovr": 71, "value": 5.0, "wage": 24, "localLad": false },
@@ -21,7 +21,7 @@
   { "id": "p17", "name": "Jeremy Sarmiento", "pos": "FW", "role": "LW", "age": 24, "ovr": 69, "value": 4.3, "wage": 23, "localLad": false, "status": "recent-signing", "blurb": "Signed from Brighton just weeks ago — pace to burn, end product still developing, not one to be calling surplus already." },
   { "id": "p18", "name": "Delano Burgzorg", "pos": "FW", "role": "LW", "age": 27, "ovr": 67, "value": 2.6, "wage": 18, "localLad": false, "status": "future-uncertain", "blurb": "Started last season well, but a move away is reportedly being weighed by both club and player — his future isn't settled." },
   { "id": "p19", "name": "Micah Hamilton", "pos": "FW", "role": "LW", "age": 22, "ovr": 64, "value": 1.5, "wage": 13, "localLad": false, "status": "future-uncertain", "blurb": "Left out of the pre-season squad entirely — City hold a buy-back clause, and this looks like a loan or permanent exit before deadline day." },
-  { "id": "p20", "name": "Morgan Whittaker", "pos": "FW", "role": "RW", "age": 25, "ovr": 79, "value": 15.5, "wage": 38, "localLad": false },
+  { "id": "p20", "name": "Morgan Whittaker", "pos": "FW", "role": "RW", "age": 25, "ovr": 79, "value": 15.5, "wage": 30, "localLad": false },
   { "id": "p21", "name": "Sontje Hansen", "pos": "FW", "role": "RW", "age": 24, "ovr": 67, "value": 3.0, "wage": 18, "localLad": false },
   { "id": "p22", "name": "Tommy Conway", "pos": "FW", "role": "LW", "age": 23, "ovr": 77, "value": 12.0, "wage": 34, "localLad": false, "blurb": "Hellberg's been explicit: this season it's Conway wide left, not through the middle — pace and directness the team's been missing on that side." },
   { "id": "p23", "name": "David Strelec", "pos": "FW", "role": "ST", "age": 25, "ovr": 74, "value": 7.0, "wage": 28, "localLad": false },
