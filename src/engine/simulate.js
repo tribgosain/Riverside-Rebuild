@@ -6,13 +6,22 @@
 
 const BASE_GOALS = 1.35;
 const GOAL_CAP = 8;
-// Goals-per-strength-point slope. Round29 balance investigation found this
-// too flat relative to per-match variance to reward a well-built squad
-// over a full season — /12 only separated a genuinely strong team from a
-// mid-table one by a modest win-rate margin. /9 makes real strength gaps
-// count for more without eliminating variance (still well short of
-// deterministic).
-const STRENGTH_SLOPE = 9;
+// Goals-per-strength-point slope. Round29's /9 (down from /12) overshot:
+// simulated full 24-team seasons showed the champion hitting 100+ points in
+// 100% of runs (avg ~117), a 46-game total that's essentially never happened
+// in real English football, with goals/game (3.10) and draw rate (13.3%)
+// both well off real Championship norms (~2.6-2.7 goals/game, ~24-26%
+// draws) — strength gaps were dictating scorelines almost deterministically.
+// /35 was picked by sweeping slope values against those three real-world
+// checks at once: it lands goals/game at 2.71 and draw rate at 23.6% (both
+// on-target), brings the champion's average points down to a realistic
+// ~91-93 with 100+ point seasons genuinely rare (~10%) rather than default,
+// and — verified by re-running the round29 title-odds check this was meant
+// to fix — still gives a maxed-out realistic squad a meaningfully better
+// shot at 1st than a do-nothing one (~26% vs ~3% at strengths 86 vs 78),
+// so decisions still matter without the standings becoming a foregone
+// conclusion at either end of the table.
+const STRENGTH_SLOPE = 35;
 
 // Knuth's algorithm — fine at these small lambdas, no need for anything fancier.
 function poissonSample(lambda) {

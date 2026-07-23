@@ -62,7 +62,12 @@ export default function ResultsModal({ state, dispatch }) {
   // watermark did (this project has moved hosts more than once).
   const shareDomain = typeof window !== 'undefined' ? window.location.host : 'riverside-rebuild';
 
-  function shareText() {
+  // The link has to be a literal URL inside the tweet text, not passed via
+  // the intent's separate &url= param — X's compose box doesn't reliably
+  // append that param, so a link relying on it can silently vanish and
+  // leave "Play Riverside Rebuild." as dead, unlinked text. Embedding the
+  // real URL directly guarantees X auto-linkifies it every time.
+  function shareText(siteUrl) {
     const outcome = promoted
       ? 'PROMOTED'
       : lostFinal
@@ -70,7 +75,7 @@ export default function ResultsModal({ state, dispatch }) {
         : lostSemi
           ? 'Lost in the playoff semis'
           : `${ordinal(season.boroPosition)} place`;
-    return `${state.manager.name}'s Boro window: ${outcome}, grade ${season.grade}. ${season.boroPoints} pts, net spend ${net >= 0 ? '+' : ''}£${net.toFixed(2)}m. Play Riverside Rebuild.`;
+    return `${state.manager.name}'s Boro window: ${outcome}, grade ${season.grade}. ${season.boroPoints} pts, net spend ${net >= 0 ? '+' : ''}£${net.toFixed(2)}m. Play Riverside Rebuild: ${siteUrl}`;
   }
 
   // Render the card to an image, then share it. Primary path on supporting
@@ -91,6 +96,7 @@ export default function ResultsModal({ state, dispatch }) {
       return;
     }
     try {
+      const siteUrl = `${window.location.origin}${window.location.pathname}`;
       const blob = await toBlob(cardRef.current, { pixelRatio: 2, skipFonts: true });
       if (!blob) throw new Error('image render failed');
 
@@ -99,7 +105,7 @@ export default function ResultsModal({ state, dispatch }) {
 
       if (SUPPORTS_SHARE_FILES) {
         try {
-          await navigator.share({ files: [file], text: shareText() });
+          await navigator.share({ files: [file], text: shareText(siteUrl), url: siteUrl });
           setShareStatus('shared');
           setTimeout(() => setShareStatus(''), 3000);
           return;
@@ -133,8 +139,7 @@ export default function ResultsModal({ state, dispatch }) {
       setShareStatus(copiedImage ? 'copied' : 'downloaded');
       setTimeout(() => setShareStatus(''), 3000);
 
-      const siteUrl = `${window.location.origin}${window.location.pathname}`;
-      const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(siteUrl)}`;
+      const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText(siteUrl))}`;
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
     } catch {
       setShareStatus('error');
