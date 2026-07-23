@@ -105,6 +105,13 @@ export function gameReducer(state, action) {
         squad: state.squad.filter((p) => p.id !== player.id),
         xi: state.xi.filter((id) => id !== player.id),
         budget: round2(state.budget + player.value),
+        // Selling a player frees the wage they were taking up, same as the
+        // wage cap being spent when one is signed (see SIGN_PLAYER below) —
+        // without this, cashing in a big earner raised transfer budget but
+        // left wage room untouched, so a sell-heavy window could leave you
+        // flush with money but still wage-capped.
+        wageCapTotal: state.wageCapTotal + player.wage,
+        wageCapRemaining: state.wageCapRemaining + player.wage,
         transfersOut: [...state.transfersOut, { player, fee: player.value }],
       };
     }

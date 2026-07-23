@@ -25,7 +25,7 @@ export default function PlayerRow({ player, tags = [], actionLabel, actionDisabl
           {showClub && player.fromClub ? ` · ${player.fromClub}` : ''}
           {' · '}
           {player.value > 0 ? `£${player.value}m` : 'Free'}
-          {showClub ? ` · £${player.wage}k/wk` : ''}
+          {` · £${player.wage}k/wk`}
         </div>
         <p className="player-card__blurb">{blurbFor(player)}</p>
         {tags.length > 0 && (
